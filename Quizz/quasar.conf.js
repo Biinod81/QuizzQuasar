@@ -42,7 +42,7 @@ module.exports = function (ctx) {
       //            (not treeshaking Quasar; biggest bundle size; convenient)
       all: 'auto',
 
-      components: ["QBanner","QChip",'QBtn'],
+      components: ["QBanner","QBtn"],
       directives: [],
 
       // Quasar plugins
