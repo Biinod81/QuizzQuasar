@@ -1,14 +1,13 @@
 <template>
-  <q-page class="flex flex-center">
-    <img
-      alt="Quasar logo"
-      src="~assets/quasar-logo-full.svg"
-    >
-  </q-page>
+  <a-page class="flex flex center">
+    <Quizz></Quizz>
+  </a-page>
 </template>
 
 <script>
+import Quizz from './quizz'
 export default {
-  name: 'PageIndex'
+  name: 'PageIndex',
+  components: { Quizz }
 }
 </script>
