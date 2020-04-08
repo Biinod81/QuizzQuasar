@@ -1,29 +1,30 @@
 <template>
     <q-page padding>
 
-        <div class="col-sm-9">
-          <h4>Version avec les boutons</h4>
-          <q-btn style="background: goldenrod; color: white" label="START" @click="choixPaysAleatoire()"/>
-          <h3>Quelle est la capitale du pays : {{ pays }}</h3>
-          <!--
-          <ul>
-            <li v-for="pays in paysCapitales" :key="pays.paysCapitales">{{ pays }}</li>
-          </ul>
-          -->
-          <div class="row q-gutter-lg">
-            <div class="col-8 col-sm-6">
-                <q-btn id="btn1" color="white" text-color="black" :label=capitale @click="clickReponse('paris')"/>
-            </div>
-            <div class="col-4 col-sm-6">
-                <q-btn id="btn2" color="white" text-color="black" :label=capitale @click="clickReponse('monaco')"/>
-            </div>
-            <div class="col-8 col-sm-6">
-                <q-btn id="btn3" color="white" text-color="black" :label=capitale @click="clickReponse('madrid')"/>
-            </div>
-            <div class="col-4 col-sm-6">
-                <q-btn id="btn4" color="white" text-color="black" :label=capitale @click="clickReponse('barcelone')"/>
-            </div>
-          </div>
+      <div class="col-sm-9">
+        <h4>Version avec les boutons</h4>
+        <q-btn style="background: goldenrod; color: white" label="SUIVANT" @click="choixPaysAleatoire()"/>
+        <h3>Quelle est la capitale du pays : {{ pays }}</h3>
+        <!--
+        <ul>
+          <li v-for="pays in paysCapitales" :key="pays.paysCapitales">{{ pays }}</li>
+        </ul>
+        -->
+        <div class="q-gutter-md" style="max-width: 300px">
+          <q-input outlined label="Entrez votre réponse ici" v-model="reponse"/>
+          <br>
+        </div>
+
+        <q-btn color="primary" label="Valider" @click="verificationReponse(reponse)"/>
+
+        <div class="q-gutter-md" style="max-width: 600px">
+          <q-field filled stack-label>
+            <template v-slot:control>
+              <div class="self-center full-width no-outline"> {{ explication }}</div>
+            </template>
+          </q-field>
+        </div>
+
       </div>
 
     </q-page>
@@ -34,26 +35,36 @@ export default {
   data () {
     return {
       paysCapitales: [
-        ['France', 'Espagne', 'Italie', 'Angleterre', 'Autriche', 'Mali', 'Gabon', 'Chili', 'Corée du sud'],
+        ['France', 'Espagne', 'Italie', 'Angleterre', 'Autriche', 'Norvege', 'Mali', 'Gabon', 'Chili', 'Corée du sud'],
         ['Paris', 'Madrid', 'Rome', 'Londres', 'Viennes', 'Oslo', 'Bamako', 'Libreville', 'Santiago', 'Seoul']
       ],
-      success: true,
+      paysDejaSelectionne: [], // stock l'index des pays déjà sélectionnés
       pays: '',
       capitale: '',
-      index: 0,
-      random: Math.random()
+      reponse: '', // réponse de l'utilisateur
+      explication: '',
+      index: 0
     }
   },
   methods: {
+    verificationReponse: function (reponse) {
+      if (this.reponse.toUpperCase() === this.capitale.toUpperCase()) {
+        this.explication = 'Bien joué !'
+      } else {
+        this.explication = 'Dommage, il fallait répondre : ' + this.capitale
+      }
+    },
+    // @keyup.enter="function()" <- execute la function en appuyant sur entrer
     choixPaysAleatoire () {
-      this.index = Math.floor(Math.random() * Math.floor(this.paysCapitales.lenght))
-      this.pays = this.paysCapitales[1][this.index]
-      this.capitale = this.paysCapitales[0][this.index]
-      console.log(this.capitale)
-      console.log(this.pays)
+      this.index = Math.floor(Math.random() * Math.floor(this.paysCapitales[0].length))
+      this.capitale = this.paysCapitales[1][this.index]
+      this.pays = this.paysCapitales[0][this.index]
+      console.log('Index : ' + this.index)
+      console.log(this.paysCapitales[1][this.index])
+      console.log(this.paysCapitales[0][this.index])
     },
     clickReponse: function (reponse) {
-      if (reponse === 'paris') {
+      if (reponse === this.capitale) {
         alert('Gagné !')
       } else {
         alert('Perdu ...')
