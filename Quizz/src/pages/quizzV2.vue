@@ -8,7 +8,7 @@
 
         <div class="q-gutter-y-md" style="max-width: 600px">
             <q-tabs v-for="indexBtn in NB_BTN" :key="indexBtn">
-              <q-btn v-model="reponseUtilisateur" color="white" text-color="black" :label=paysCapitales[indexBtn-1].capitale @click="verificationReponse(paysCapitales[indexBtn-1].capitale)" />
+              <q-btn v-model="reponseUtilisateur" color="white" text-color="black" :label=paysCapitales[indexBtn-1].capitale @click="verificationReponse($event)" />
             </q-tabs>
         </div>
 
@@ -58,6 +58,7 @@ export default {
       reponseQuestion: '', // réponse de la réponse
       index: 0, // index permettant de choisir les capitales / pays
       pays: '',
+      event: '',
       capitale: ''
     }
   },
@@ -65,7 +66,7 @@ export default {
 
     // vérifie la réponse de l'utilisateur et show un text en fonction de la réponse
     verificationReponse: function (reponse) {
-      if (this.reponse.toUpperCase() === this.capitale.toUpperCase()) {
+      if (reponse.target.textContent.toUpperCase() === this.capitale.toUpperCase()) {
         this.reponseQuestion = 'Bien joué !'
       } else {
         this.reponseQuestion = 'Dommage, il fallait répondre : ' + this.capitale
@@ -102,6 +103,11 @@ export default {
       this.capitale = ''
       this.pays = ''
       console.log('Tableau des pays déjà sélectionné vidé !' + this.paysDejaSelectionne)
+    },
+
+    getButtonValue: function (e) {
+      console.log({ a: e.target })
+      console.log(e.target.textContent)
     }
   }
 }
