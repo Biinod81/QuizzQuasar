@@ -1,11 +1,9 @@
 <template>
-  <a-page class="flex flex center">
     <Quizz></Quizz>
-  </a-page>
 </template>
 
 <script>
-import Quizz from './quizz'
+import Quizz from './quizzV2'
 export default {
   name: 'PageIndex',
   components: { Quizz }
