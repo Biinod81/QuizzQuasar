@@ -12,13 +12,6 @@
             </q-tabs>
         </div>
 
-        <div class="q-gutter-md" style="max-width: 300px">
-            <q-input outlined label="Entrez votre réponse ici" v-model="reponseUtilisateur"/>
-            <br>
-        </div>
-
-        <q-btn color="primary" label="Valider" @click="verificationReponse(reponseUtilisateur)"/>
-
         <div class="q-gutter-md" style="max-width: 600px">
             <q-field filled stack-label>
             <template v-slot:control>
