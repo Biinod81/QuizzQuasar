@@ -1,41 +1,38 @@
 <template>
-    <q-page padding>
 
-    <div class="col-sm-9" v-if="this.paysDejaSelectionne.length <= this.NB_QUESTION">
-        <q-btn style="background: goldenrod; color: white" label="START" @click="choixPaysAleatoire(); afficherBtn()" v-if="isHidden"/>
-        <q-btn style="background: #FF0080; color: white" label="RESET" @click="reset(); viderChamp()" v-if="!isHidden"/>
-        <q-btn style="background: goldenrod; color: white" label="SUIVANT" @click="choixPaysAleatoire(); viderChamp()" v-if="!enCours"/>
+  <div class="q-pa-xl" v-if="this.paysDejaSelectionne.length <= this.NB_QUESTION">
+      <q-btn style="background: goldenrod; color: white" label="START" @click="choixPaysAleatoire(); afficherBtn()" v-if="isHidden"/>
+      <q-btn style="background: #FF0080; color: white" label="RESET" @click="reset(); viderChamp()" v-if="!isHidden"/>
+      <q-btn style="background: goldenrod; color: white" label="SUIVANT" @click="choixPaysAleatoire(); viderChamp()" v-if="!enCours"/>
 
-        <!-- Corps du quizz (questions + boutons) -->
-        <div v-if="!isHidden">
+      <!-- Corps du quizz (questions + boutons) -->
+      <div  v-if="!isHidden">
+        <!-- Question -->
+        <h3>Quelle est la capitale du pays : {{ pays }}</h3>
 
-          <!-- Question -->
-          <h3>Quelle est la capitale du pays : {{ pays }}</h3>
-
-          <div class="q-gutter-y-md" style="max-width: 600px">
-              <q-tabs v-for="indexBtn in NB_BTN" :key="indexBtn">
-                <q-btn color="white" text-color="black" :label=paysCapitales[indexBtn-1].capitale @click="verificationReponse($event)" />
-              </q-tabs>
-          </div>
-
-          <div class="q-gutter-md" style="max-width: 600px">
-              <q-field filled stack-label>
-              <template v-slot:control>
-                  <div class="self-center full-width no-outline"> {{ reponseQuestion }}</div>
-              </template>
-              </q-field>
+        <div class="row" style="height: 75px" v-for="indexBtn in NB_BTN" :key="indexBtn">
+          <div class="col">
+            <q-btn color="white" text-color="black" :label=paysCapitales[indexBtn-1].capitale @click="verificationReponse($event)" />
           </div>
         </div>
-    </div>
 
-    <!-- fin de partie -->
-    <div class="col-sm-9" v-else>
-      <q-btn style="background: #FF0080; color: white" label="RESTART" @click="reset(); viderChamp()" v-if="!isHidden"/>
-      <h2>Bien joué</h2>
-      <h2>Voici votre score : {{ this.score }} / {{ this.NB_QUESTION }}</h2>
-    </div>
+        <div style="max-width: 600px">
+            <q-field filled stack-label>
+            <template v-slot:control>
+                <div class="self-center full-width no-outline"> {{ reponseQuestion }}</div>
+            </template>
+            </q-field>
+        </div>
+      </div>
+  </div>
 
-  </q-page>
+  <!-- fin de partie -->
+  <div v-else>
+    <q-btn style="background: #FF0080; color: white" label="RESTART" @click="reset(); viderChamp()" v-if="!isHidden"/>
+    <h2>Bien joué</h2>
+    <h2>Voici votre score : {{ this.score }} / {{ this.NB_QUESTION }}</h2>
+  </div>
+
 </template>
 
 <script>
