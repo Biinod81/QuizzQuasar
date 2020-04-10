@@ -1,25 +1,38 @@
 <template>
     <q-page padding>
 
-    <div class="col-sm-9" @keyup.enter=verificationReponse(reponseUtilisateur)>
-        <q-btn style="background: goldenrod; color: white" label="START / SUIVANT" @click="choixPaysAleatoire(); viderChamp()"/>
-        <q-btn style="background: #FF0080; color: white" label="RESET" @click="reset(); viderChamp()"/>
-        <h3>Quelle est la capitale du pays : {{ pays }}</h3>
+    <div class="col-sm-9" v-if="this.paysDejaSelectionne.length <= this.NB_QUESTION">
+        <q-btn style="background: goldenrod; color: white" label="START" @click="choixPaysAleatoire(); afficherBtn()" v-if="isHidden"/>
+        <q-btn style="background: #FF0080; color: white" label="RESET" @click="reset(); viderChamp()" v-if="!isHidden"/>
+        <q-btn style="background: goldenrod; color: white" label="SUIVANT" @click="choixPaysAleatoire(); viderChamp()" v-if="!enCours"/>
 
-        <div class="q-gutter-y-md" style="max-width: 600px">
-            <q-tabs v-for="indexBtn in NB_BTN" :key="indexBtn">
-              <q-btn v-model="reponseUtilisateur" color="white" text-color="black" :label=paysCapitales[indexBtn-1].capitale @click="verificationReponse($event)" />
-            </q-tabs>
+        <!-- Corps du quizz (questions + boutons) -->
+        <div v-if="!isHidden">
+
+          <!-- Question -->
+          <h3>Quelle est la capitale du pays : {{ pays }}</h3>
+
+          <div class="q-gutter-y-md" style="max-width: 600px">
+              <q-tabs v-for="indexBtn in NB_BTN" :key="indexBtn">
+                <q-btn color="white" text-color="black" :label=paysCapitales[indexBtn-1].capitale @click="verificationReponse($event)" />
+              </q-tabs>
+          </div>
+
+          <div class="q-gutter-md" style="max-width: 600px">
+              <q-field filled stack-label>
+              <template v-slot:control>
+                  <div class="self-center full-width no-outline"> {{ reponseQuestion }}</div>
+              </template>
+              </q-field>
+          </div>
         </div>
+    </div>
 
-        <div class="q-gutter-md" style="max-width: 600px">
-            <q-field filled stack-label>
-            <template v-slot:control>
-                <div class="self-center full-width no-outline"> {{ reponseQuestion }}</div>
-            </template>
-            </q-field>
-        </div>
-
+    <!-- fin de partie -->
+    <div class="col-sm-9" v-else>
+      <q-btn style="background: #FF0080; color: white" label="RESTART" @click="reset(); viderChamp()" v-if="!isHidden"/>
+      <h2>Bien joué</h2>
+      <h2>Voici votre score : {{ this.score }} / {{ this.NB_QUESTION }}</h2>
     </div>
 
   </q-page>
@@ -45,14 +58,15 @@ export default {
         { pays: 'Corée du Sud', capitale: 'Séoul' }
       ],
       paysDejaSelectionne: [], // stock l'index des pays déjà sélectionnés
-      NB_QUESTION: 10, // Nombre total de questions posées
+      NB_QUESTION: 5, // Nombre total de questions posées
       NB_BTN: 4, // Nombre de boutons dispo pour l'utilisateur
-      reponseUtilisateur: '', // réponse de l'utilisateur
       reponseQuestion: '', // réponse de la réponse
       index: 0, // index permettant de choisir les capitales / pays
       pays: '',
-      event: '',
-      capitale: ''
+      capitale: '',
+      score: 0,
+      isHidden: true, // VRAI si la partie n'a pas encore commencé, FAUX sinon
+      enCours: true // VRAI si il y a une question en cours, FAUX sinon
     }
   },
   methods: {
@@ -61,8 +75,12 @@ export default {
     verificationReponse: function (reponse) {
       if (reponse.target.textContent.toUpperCase() === this.capitale.toUpperCase()) {
         this.reponseQuestion = 'Bien joué !'
+        this.enCours = false
+        this.score++
+        console.log('Score du joueur : ' + this.score)
       } else {
-        this.reponseQuestion = 'Dommage, il fallait répondre : ' + this.capitale
+        this.reponseQuestion = 'Dommage, la bonne réponse était : ' + this.capitale
+        this.enCours = false
       }
     },
 
@@ -77,30 +95,32 @@ export default {
       this.paysDejaSelectionne.push(this.index)
       console.log('Index des Pays déjà sélectionné : ' + this.paysDejaSelectionne)
 
-      this.capitale = this.paysCapitales[this.index].capitale // attribut la capitale choisie aléatoirement à la variable "capitale"
-      this.pays = this.paysCapitales[this.index].pays // attribut le pays choisi aléatoirement à la variable "pays"
+      this.capitale = this.paysCapitales[this.index].capitale // attribut la capitale choisie aléatoirement
+      this.pays = this.paysCapitales[this.index].pays // attribut le pays choisi aléatoirement
       console.log('capitales : ' + this.capitale) // renvoie la capitale qui a été choisie
       console.log('pays : ' + this.pays) // renvoie la pays qui a été choisi
+
+      this.enCours = true
     },
 
     // Vide les champs explication et reponse pour que ce soit moins redondant pour l'utilisateur
     viderChamp () {
-      this.reponseUtilisateur = ''
       this.reponseQuestion = ''
+    },
+
+    afficherBtn () {
+      this.isHidden = false
     },
 
     // vide le tableau des pays déjà choisis, remet des valeurs null pour "capitale" et "pays" et clear la console
     reset () {
       console.clear()
+      this.score = 0
+      this.isHidden = true
       this.paysDejaSelectionne.length = 0
       this.capitale = ''
       this.pays = ''
       console.log('Tableau des pays déjà sélectionné vidé !' + this.paysDejaSelectionne)
-    },
-
-    getButtonValue: function (e) {
-      console.log({ a: e.target })
-      console.log(e.target.textContent)
     }
   }
 }
