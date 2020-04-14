@@ -46,9 +46,9 @@ module.exports = function (ctx) {
       "QBanner",
       "QBtn",
       'QItemLabel',
-      'QTabs',
       'QTab',
-      'QRouteTab'],
+      'QRouteTab',
+      'QField'],
       directives: [],
 
       // Quasar plugins

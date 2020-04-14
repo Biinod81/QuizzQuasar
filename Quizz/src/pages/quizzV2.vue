@@ -1,36 +1,52 @@
 <template>
 
   <div class="q-pa-xl" v-if="this.paysDejaSelectionne.length <= this.NB_QUESTION">
-      <q-btn style="background: goldenrod; color: white" label="START" @click="choixPaysAleatoire(); afficherBtn()" v-if="isHidden"/>
-      <q-btn style="background: #FF0080; color: white" label="RESET" @click="reset(); viderChamp()" v-if="!isHidden"/>
+      <q-btn style="background: goldenrod; color: white" label="START" @click="choixPaysAleatoire(); afficherBtn()" v-if="isStart"/>
+      <q-btn style="background: #FF0080; color: white" label="RESET" @click="reset()" v-if="!isStart"/>
       <q-btn style="background: goldenrod; color: white" label="SUIVANT" @click="choixPaysAleatoire(); viderChamp()" v-if="!enCours"/>
 
       <!-- Corps du quizz (questions + boutons) -->
-      <div  v-if="!isHidden">
+      <div  v-if="!isStart">
+        <!--Indique le numéro de la questio en cours-->
+        <h5>Question #{{ this.numQuestion }}/{{ this.NB_QUESTION }}</h5>
         <!-- Question -->
-        <h3>Quelle est la capitale du pays : {{ pays }}</h3>
+        <h3>Quelle est la capitale du pays : {{ this.pays }}</h3>
 
-        <div class="row" style="height: 75px" v-for="indexBtn in NB_BTN" :key="indexBtn">
-          <div class="col">
-            <q-btn color="white" text-color="black" :label=paysCapitales[indexBtn-1].capitale @click="verificationReponse($event)" />
+        <!--Affichage des boutons pour le joueur-->
+        <div v-if="!this.questionRepondu">
+          <div class="row" style="height: 75px" v-for="indexBtn in this.NB_BTN" :key="indexBtn">
+            <div class="col">
+              <q-btn color="white" text-color="black" :label=paysCapitales[indexBtn-1].capitale @click="verificationReponse($event)" />
+            </div>
           </div>
         </div>
 
-        <div style="max-width: 600px">
-            <q-field filled stack-label>
-            <template v-slot:control>
-                <div class="self-center full-width no-outline"> {{ reponseQuestion }}</div>
-            </template>
-            </q-field>
+        <div v-else>
+          <div class="row" style="height: 75px" v-for="indexBtn in this.NB_BTN" :key="indexBtn">
+            <div class="col">
+              <q-btn color="white" text-color="black" disabled :label=paysCapitales[indexBtn-1].capitale @click="verificationReponse($event)" />
+            </div>
+          </div>
         </div>
+
+        <!--Réponse à la question-->
+        <div v-if="!this.hide">
+          <div style="max-width: 600px" :class="{ green: success, red: !success }">
+            <q-field outlined>
+              <template v-slot:control>
+                <div class="self-center" text-color="white">{{ reponseQuestion }}</div>
+              </template>
+            </q-field>
+          </div>
+        </div>
+
       </div>
   </div>
 
   <!-- fin de partie -->
-  <div v-else>
-    <q-btn style="background: #FF0080; color: white" label="RESTART" @click="reset(); viderChamp()" v-if="!isHidden"/>
-    <h2>Bien joué</h2>
-    <h2>Voici votre score : {{ this.score }} / {{ this.NB_QUESTION }}</h2>
+  <div class="q-pa-xl" v-else>
+    <q-btn style="background: #FF0080; color: white" label="RESTART" @click="reset()" v-if="!isStart"/>
+    <h2 class="absolute-center">Score final : {{ this.score }} / {{ this.NB_QUESTION }}</h2>
   </div>
 
 </template>
@@ -61,9 +77,13 @@ export default {
       index: 0, // index permettant de choisir les capitales / pays
       pays: '',
       capitale: '',
-      score: 0,
-      isHidden: true, // VRAI si la partie n'a pas encore commencé, FAUX sinon
-      enCours: true // VRAI si il y a une question en cours, FAUX sinon
+      score: 0, // score du joueur
+      numQuestion: 1, // indique le numéro de la question
+      isStart: true, // VRAI si la partie n'a pas encore commencé, FAUX sinon
+      enCours: true, // VRAI si il y a une question en cours, FAUX sinon
+      success: true,
+      questionRepondu: false,
+      hide: true // cache la réponse à la question si VRAI, la dévoile si FAUX
     }
   },
   methods: {
@@ -72,13 +92,18 @@ export default {
     verificationReponse: function (reponse) {
       if (reponse.target.textContent.toUpperCase() === this.capitale.toUpperCase()) {
         this.reponseQuestion = 'Bien joué !'
-        this.enCours = false
+        this.reponseQuestion.fontcolor('green')
         this.score++
+        this.success = true
         console.log('Score du joueur : ' + this.score)
       } else {
+        this.reponseQuestion.fontcolor('red')
         this.reponseQuestion = 'Dommage, la bonne réponse était : ' + this.capitale
-        this.enCours = false
+        this.success = false
       }
+      this.hide = false
+      this.questionRepondu = true
+      this.enCours = false
     },
 
     // Choisis aléatoirement un pays parmis le tableau d'objet "paysCapitales"
@@ -102,25 +127,43 @@ export default {
 
     // Vide les champs explication et reponse pour que ce soit moins redondant pour l'utilisateur
     viderChamp () {
+      this.questionRepondu = false
       this.reponseQuestion = ''
+      this.numQuestion++
+      this.hide = true
     },
 
+    // Permet d'afficher les boutons pour que le joueur puissent choisir une réponse
     afficherBtn () {
-      this.isHidden = false
+      this.isStart = false
     },
 
-    // vide le tableau des pays déjà choisis, remet des valeurs null pour "capitale" et "pays" et clear la console
+    // Remet les mêmes valeurs qu'en début de partie
     reset () {
       console.clear()
       this.score = 0
-      this.isHidden = true
+      this.questionRepondu = false
+      this.hide = true
+      this.numQuestion = 1
+      this.isStart = true
+      this.enCours = true
       this.paysDejaSelectionne.length = 0
       this.capitale = ''
       this.pays = ''
-      console.log('Tableau des pays déjà sélectionné vidé !' + this.paysDejaSelectionne)
+      this.reponseQuestion = ''
     }
   }
 }
 </script>
 
-<style></style>
+<style>
+.red {
+  background-color: #CB4335;
+}
+.green {
+  background-color: #28B463;
+}
+.white {
+  background-color: #ffffff;
+}
+</style>
