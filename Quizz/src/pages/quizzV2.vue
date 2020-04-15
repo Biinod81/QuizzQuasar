@@ -1,52 +1,56 @@
 <template>
 
   <div class="q-pa-xl" v-if="this.paysDejaSelectionne.length <= this.NB_QUESTION">
+    <div class="MsSemiBold row justify-center">
       <q-btn style="background: goldenrod; color: white" label="START" @click="choixPaysAleatoire(); afficherBtn()" v-if="isStart"/>
       <q-btn style="background: #FF0080; color: white" label="RESET" @click="reset()" v-if="!isStart"/>
       <q-btn style="background: goldenrod; color: white" label="SUIVANT" @click="choixPaysAleatoire(); viderChamp()" v-if="!enCours"/>
+    </div>
+    <!-- Corps du quizz (questions + boutons) -->
+    <div v-if="!isStart">
 
-      <!-- Corps du quizz (questions + boutons) -->
-      <div  v-if="!isStart">
-        <!--Indique le numéro de la questio en cours-->
-        <h5>Question #{{ this.numQuestion }}/{{ this.NB_QUESTION }}</h5>
+      <!--Indique le numéro de la questio en cours-->
+      <div class="row justify-center">
+        <h4 class="MsSemiBold">Question #{{ this.numQuestion }}/{{ this.NB_QUESTION }}<div class="MsBlack">Quelle est la capitale du pays : {{ this.pays }}</div></h4>
         <!-- Question -->
-        <h3>Quelle est la capitale du pays : {{ this.pays }}</h3>
-
-        <!--Affichage des boutons pour le joueur-->
-        <div v-if="!this.questionRepondu">
-          <div class="row" style="height: 75px" v-for="indexBtn in this.NB_BTN" :key="indexBtn">
-            <div class="col">
-              <q-btn color="white" text-color="black" :label=paysCapitales[indexBtn-1].capitale @click="verificationReponse($event)" />
-            </div>
-          </div>
-        </div>
-
-        <div v-else>
-          <div class="row" style="height: 75px" v-for="indexBtn in this.NB_BTN" :key="indexBtn">
-            <div class="col">
-              <q-btn color="white" text-color="black" disabled :label=paysCapitales[indexBtn-1].capitale @click="verificationReponse($event)" />
-            </div>
-          </div>
-        </div>
-
-        <!--Réponse à la question-->
-        <div v-if="!this.hide">
-          <div style="max-width: 600px" :class="{ green: success, red: !success }">
-            <q-field outlined>
-              <template v-slot:control>
-                <div class="self-center" text-color="white">{{ reponseQuestion }}</div>
-              </template>
-            </q-field>
-          </div>
-        </div>
-
+        <!--<h5 class="MsBlack">Quelle est la capitale du pays : {{ this.pays }}</h5>-->
       </div>
+
+      <!--Affichage des boutons pour le joueur-->
+      <div v-if="!this.questionRepondu">
+        <div class="q-gutter-xl row justify-center">
+            <q-btn class="MsSemiBold" color="white" text-color="black" :label=paysCapitales[indexBtn-1].capitale @click="verificationReponse($event)" v-for="indexBtn in this.NB_BTN" :key="indexBtn"/>
+        </div>
+      </div>
+      <div v-else>
+        <div class="q-gutter-xl row justify-center">
+            <q-btn class="MsSemiBold" color="white" text-color="black" disabled :label=paysCapitales[indexBtn-1].capitale @click="verificationReponse($event)" v-for="indexBtn in this.NB_BTN" :key="indexBtn"/>
+        </div>
+      </div>
+
+      <!--Réponse à la question-->
+      <br><br><br>
+      <div class="row justify-center" v-if="!this.hide">
+        <div :class="{ green: success, red: !success }">
+          <q-field outlined>
+            <template v-slot:control>
+              <div class="MsSemiBold" text-color="white"><b>{{ reponseQuestion }}</b></div>
+            </template>
+          </q-field>
+        </div>
+      </div>
+
+    </div>
   </div>
 
   <!-- fin de partie -->
   <div class="q-pa-xl" v-else>
-    <q-btn style="background: #FF0080; color: white" label="RESTART" @click="reset()" v-if="!isStart"/>
-    <h2 class="absolute-center">Score final : {{ this.score }} / {{ this.NB_QUESTION }}</h2>
+    <div class="row justify-center">
+      <q-btn style="background: #FF0080; color: white" label="RESTART" @click="reset()" v-if="!isStart"/>
+    </div>
+    <div class="MsSemiBold row justify-center">
+      <h3>Score final : {{ this.score }} / {{ this.NB_QUESTION }}</h3>
+    </div>
   </div>
 
 </template>
@@ -165,5 +169,11 @@ export default {
 }
 .white {
   background-color: #ffffff;
+}
+.MsSemiBold {
+  font-family: 'Montserrat SemiBold';
+}
+.MsBlack {
+  font-family: 'Montserrat Black';
 }
 </style>
