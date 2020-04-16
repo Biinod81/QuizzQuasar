@@ -2,26 +2,25 @@
 
   <div class="q-pa-xl" v-if="this.paysDejaSelectionne.length <= this.NB_QUESTION">
     <div class="MsSemiBold row justify-center">
-      <q-btn style="background: goldenrod; color: white" label="START" @click="choixPaysAleatoire(); afficherBtn()" v-if="isStart"/>
-      <q-btn style="background: #FF0080; color: white" label="RESET" @click="reset()" v-if="!isStart"/>
+      <q-btn style="background: goldenrod; color: white" label="START" @click="choixPaysAleatoire(); afficherBtn()" v-if="!isStart"/>
+      <q-btn style="background: #FF0080; color: white" label="RESET" @click="reset()" v-if="isStart"/>
       <q-btn style="background: goldenrod; color: white" label="SUIVANT" @click="choixPaysAleatoire(); viderChamp()" v-if="!questionEnCours"/>
     </div>
     <!-- Corps du quizz (questions + boutons) -->
-    <div v-if="!isStart">
+    <div v-if="isStart">
 
-      <!--Indique le numéro de la questio en cours-->
+      <!--Indique le numéro de la questio en cours + l'énoncé de la question-->
       <div class="row justify-center">
         <h4 class="MsSemiBold">Question #{{ this.numQuestion }}/{{ this.NB_QUESTION }}<div class="MsBlack">Quelle est la capitale du pays : {{ this.pays }}</div></h4>
-        <!-- Question -->
-        <!--<h5 class="MsBlack">Quelle est la capitale du pays : {{ this.pays }}</h5>-->
       </div>
 
-      <!--Affichage des boutons pour le joueur-->
+      <!--Affiche les boutons actifs si il y a une question en cours-->
       <div v-if="this.questionEnCours">
         <div class="q-gutter-xl row justify-center">
             <q-btn class="MsSemiBold" color="white" text-color="black" v-for="indexBtn in this.tabCapitaleAleatoire" :key="indexBtn" :label=paysCapitales[indexBtn].capitale @click="verificationReponse($event)"/>
         </div>
       </div>
+      <!--Affiche les boutons désactivés si il n'y a pas de question en cours-->
       <div v-else>
         <div class="q-gutter-xl row justify-center">
             <q-btn class="MsSemiBold" color="white" text-color="black" v-for="indexBtn in this.tabCapitaleAleatoire" :key="indexBtn" disabled :label=paysCapitales[indexBtn].capitale @click="verificationReponse($event)"/>
@@ -46,7 +45,7 @@
   <!-- fin de partie -->
   <div class="q-pa-xl" v-else>
     <div class="row justify-center">
-      <q-btn style="background: #FF0080; color: white" label="RESTART" @click="reset()" v-if="!isStart"/>
+      <q-btn style="background: #FF0080; color: white" label="RESTART" @click="reset()" v-if="isStart"/>
     </div>
     <div class="MsSemiBold row justify-center">
       <h3>Score final : {{ this.score }} / {{ this.NB_QUESTION }}</h3>
@@ -97,7 +96,7 @@ export default {
       capitale: '',
       score: 0, // score du joueur
       numQuestion: 1, // indique le numéro de la question
-      isStart: true, // VRAI si la partie n'a pas encore commencé, FAUX sinon
+      isStart: false, // VRAI si la partie a commencé, FAUX sinon
       questionEnCours: true, // VRAI si il y a une question en cours, FAUX sinon
       success: true, // VRAI = cadrant de la réponse VERT, FAUX = cadrant de la réponse ROUGE
       hide: true // cache le cadrant de la réponse à la question si VRAI, la dévoile si FAUX
@@ -135,6 +134,7 @@ export default {
       this.paysDejaSelectionne.push(this.index)
       this.tabCapitaleAleatoire.push(this.index)
       let v
+      // modifier NB_BTN pour modifier le nombre de boutons affichés
       for (let i = 0; i < this.NB_BTN - 1; i++) {
         do {
           v = Math.floor(Math.random() * Math.floor(this.paysCapitales.length))
@@ -142,7 +142,7 @@ export default {
         this.tabCapitaleAleatoire.push(v)
       }
       // Mélange le tableau des capitales de façon à ne pas avoir la réponse sur le même bouton
-      this.melanger(this.tabCapitaleAleatoire)
+      this.shuffle(this.tabCapitaleAleatoire)
       console.log('Index des Pays déjà sélectionné : ' + this.paysDejaSelectionne)
       console.log('Tab des capitales aléatoire : ' + this.tabCapitaleAleatoire)
 
@@ -155,7 +155,7 @@ export default {
     },
 
     // Mélange le tableau des capitales de façon à ne pas avoir la réponse sur le même bouton
-    melanger: function (tab) {
+    shuffle: function (tab) {
       let IndexActuel = tab.length, v, IndexAleatoire
       // Tant qu'il reste des éléments à mélanger
       while (IndexActuel !== 0) {
@@ -179,13 +179,13 @@ export default {
 
     // Permet d'afficher les boutons pour que le joueur puissent choisir une réponse
     afficherBtn () {
-      this.isStart = false
+      this.isStart = true
     },
 
     // Reset de toutes les valeurs pour pouvoir redémarrer une partie correctement
     reset () {
       console.clear()
-      this.isStart = true
+      this.isStart = false
       this.questionEnCours = true
       this.hide = true
       this.score = 0
