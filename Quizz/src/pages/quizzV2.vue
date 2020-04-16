@@ -72,7 +72,20 @@ export default {
         { pays: 'Thaïlande', capitale: 'Bangkok' },
         { pays: 'Gabon', capitale: 'Libreville' },
         { pays: 'Chili', capitale: 'Santiago' },
-        { pays: 'Corée du Sud', capitale: 'Séoul' }
+        { pays: 'Corée du Sud', capitale: 'Séoul' },
+        { pays: 'Mali', capitale: 'Bamako' },
+        { pays: 'Grèce', capitale: 'Athène' },
+        { pays: 'Liban', capitale: 'Beyrouth' },
+        { pays: 'Philippines', capitale: 'Manille' },
+        { pays: 'Mozambique', capitale: 'Maputo' },
+        { pays: 'Yémen', capitale: 'Sanaa' },
+        { pays: 'Biélorussie', capitale: 'Minsk' },
+        { pays: 'Croatie', capitale: 'Zagreb' },
+        { pays: 'Nouvelle-Zélande', capitale: 'Wellington' },
+        { pays: 'Maroc', capitale: 'Rabat' },
+        { pays: 'Cuba', capitale: 'La Havane' },
+        { pays: 'Suisse', capitale: 'Berne' },
+        { pays: 'Belgique', capitale: 'Bruxelles' }
       ],
       paysDejaSelectionne: [], // stock l'index des pays déjà sélectionnés
       tabCapitaleAleatoire: [],
@@ -86,7 +99,7 @@ export default {
       numQuestion: 1, // indique le numéro de la question
       isStart: true, // VRAI si la partie n'a pas encore commencé, FAUX sinon
       questionEnCours: true, // VRAI si il y a une question en cours, FAUX sinon
-      success: true,
+      success: true, // VRAI = cadrant de la réponse VERT, FAUX = cadrant de la réponse ROUGE
       hide: true // cache le cadrant de la réponse à la question si VRAI, la dévoile si FAUX
     }
   },
