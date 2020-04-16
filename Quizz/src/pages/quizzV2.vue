@@ -4,7 +4,7 @@
     <div class="MsSemiBold row justify-center">
       <q-btn style="background: goldenrod; color: white" label="START" @click="choixPaysAleatoire(); afficherBtn()" v-if="isStart"/>
       <q-btn style="background: #FF0080; color: white" label="RESET" @click="reset()" v-if="!isStart"/>
-      <q-btn style="background: goldenrod; color: white" label="SUIVANT" @click="choixPaysAleatoire(); viderChamp()" v-if="!enCours"/>
+      <q-btn style="background: goldenrod; color: white" label="SUIVANT" @click="choixPaysAleatoire(); viderChamp()" v-if="!questionEnCours"/>
     </div>
     <!-- Corps du quizz (questions + boutons) -->
     <div v-if="!isStart">
@@ -17,14 +17,14 @@
       </div>
 
       <!--Affichage des boutons pour le joueur-->
-      <div v-if="!this.questionRepondu">
+      <div v-if="this.questionEnCours">
         <div class="q-gutter-xl row justify-center">
-            <q-btn class="MsSemiBold" color="white" text-color="black" :label=paysCapitales[indexBtn-1].capitale @click="verificationReponse($event)" v-for="indexBtn in this.NB_BTN" :key="indexBtn"/>
+            <q-btn class="MsSemiBold" color="white" text-color="black" v-for="indexBtn in this.tabCapitaleAleatoire" :key="indexBtn" :label=paysCapitales[indexBtn].capitale @click="verificationReponse($event)"/>
         </div>
       </div>
       <div v-else>
         <div class="q-gutter-xl row justify-center">
-            <q-btn class="MsSemiBold" color="white" text-color="black" disabled :label=paysCapitales[indexBtn-1].capitale @click="verificationReponse($event)" v-for="indexBtn in this.NB_BTN" :key="indexBtn"/>
+            <q-btn class="MsSemiBold" color="white" text-color="black" v-for="indexBtn in this.tabCapitaleAleatoire" :key="indexBtn" disabled :label=paysCapitales[indexBtn].capitale @click="verificationReponse($event)"/>
         </div>
       </div>
 
@@ -75,6 +75,7 @@ export default {
         { pays: 'Corée du Sud', capitale: 'Séoul' }
       ],
       paysDejaSelectionne: [], // stock l'index des pays déjà sélectionnés
+      tabCapitaleAleatoire: [],
       NB_QUESTION: 5, // Nombre total de questions posées
       NB_BTN: 4, // Nombre de boutons dispo pour l'utilisateur
       reponseQuestion: '', // réponse de la réponse
@@ -84,54 +85,80 @@ export default {
       score: 0, // score du joueur
       numQuestion: 1, // indique le numéro de la question
       isStart: true, // VRAI si la partie n'a pas encore commencé, FAUX sinon
-      enCours: true, // VRAI si il y a une question en cours, FAUX sinon
+      questionEnCours: true, // VRAI si il y a une question en cours, FAUX sinon
       success: true,
-      questionRepondu: false,
-      hide: true // cache la réponse à la question si VRAI, la dévoile si FAUX
+      hide: true // cache le cadrant de la réponse à la question si VRAI, la dévoile si FAUX
     }
   },
   methods: {
 
     // vérifie la réponse de l'utilisateur et show un text en fonction de la réponse
     verificationReponse: function (reponse) {
+      // si VRAI, on augemente le score du joueur et passe success à TRUE pour afficher le cadrant de la réponse en vert
       if (reponse.target.textContent.toUpperCase() === this.capitale.toUpperCase()) {
         this.reponseQuestion = 'Bien joué !'
-        this.reponseQuestion.fontcolor('green')
         this.score++
         this.success = true
-        console.log('Score du joueur : ' + this.score)
+      // si FAUX, on passe success à FALSE pour afficher le cadrant de la réponse en rouge
       } else {
-        this.reponseQuestion.fontcolor('red')
         this.reponseQuestion = 'Dommage, la bonne réponse était : ' + this.capitale
         this.success = false
       }
+      // affiche le cadrant de la réponse
       this.hide = false
-      this.questionRepondu = true
-      this.enCours = false
+      this.questionEnCours = false
     },
 
     // Choisis aléatoirement un pays parmis le tableau d'objet "paysCapitales"
     choixPaysAleatoire () {
+      // reset le tableau des capitales aléatoires pour n'avoir que 4 bouttons affichés
+      this.tabCapitaleAleatoire = []
+
       do { // Permet de ne pas choisir 2 fois le même pays
         this.index = Math.floor(Math.random() * Math.floor(this.paysCapitales.length)) // Choisis un index aléatoirement
         console.log('Index sélectionné : ' + this.index) // renvoie l'index qui a été choisis
       } while (this.paysDejaSelectionne.includes(this.index))
 
-      // ajoute l'index choisis aléatoirement dans le tableau paysDejaSelectionné
       this.paysDejaSelectionne.push(this.index)
+      this.tabCapitaleAleatoire.push(this.index)
+      let v
+      for (let i = 0; i < this.NB_BTN - 1; i++) {
+        do {
+          v = Math.floor(Math.random() * Math.floor(this.paysCapitales.length))
+        } while (this.tabCapitaleAleatoire.includes(v))
+        this.tabCapitaleAleatoire.push(v)
+      }
+      // Mélange le tableau des capitales de façon à ne pas avoir la réponse sur le même bouton
+      this.melanger(this.tabCapitaleAleatoire)
       console.log('Index des Pays déjà sélectionné : ' + this.paysDejaSelectionne)
+      console.log('Tab des capitales aléatoire : ' + this.tabCapitaleAleatoire)
 
       this.capitale = this.paysCapitales[this.index].capitale // attribut la capitale choisie aléatoirement
       this.pays = this.paysCapitales[this.index].pays // attribut le pays choisi aléatoirement
       console.log('capitales : ' + this.capitale) // renvoie la capitale qui a été choisie
       console.log('pays : ' + this.pays) // renvoie la pays qui a été choisi
 
-      this.enCours = true
+      this.questionEnCours = true
+    },
+
+    // Mélange le tableau des capitales de façon à ne pas avoir la réponse sur le même bouton
+    melanger: function (tab) {
+      let IndexActuel = tab.length, v, IndexAleatoire
+      // Tant qu'il reste des éléments à mélanger
+      while (IndexActuel !== 0) {
+        // On choisi un élément restant
+        IndexAleatoire = Math.floor(Math.random() * IndexActuel)
+        IndexActuel -= 1
+        // Et on l'échange avec l'élément actuel
+        v = tab[IndexActuel]
+        tab[IndexActuel] = tab[IndexAleatoire]
+        tab[IndexAleatoire] = v
+      }
+      return tab
     },
 
     // Vide les champs explication et reponse pour que ce soit moins redondant pour l'utilisateur
     viderChamp () {
-      this.questionRepondu = false
       this.reponseQuestion = ''
       this.numQuestion++
       this.hide = true
@@ -142,16 +169,16 @@ export default {
       this.isStart = false
     },
 
-    // Remet les mêmes valeurs qu'en début de partie
+    // Reset de toutes les valeurs pour pouvoir redémarrer une partie correctement
     reset () {
       console.clear()
-      this.score = 0
-      this.questionRepondu = false
-      this.hide = true
-      this.numQuestion = 1
       this.isStart = true
-      this.enCours = true
-      this.paysDejaSelectionne.length = 0
+      this.questionEnCours = true
+      this.hide = true
+      this.score = 0
+      this.numQuestion = 1
+      this.tabCapitaleAleatoire = []
+      this.paysDejaSelectionne = []
       this.capitale = ''
       this.pays = ''
       this.reponseQuestion = ''
@@ -166,9 +193,6 @@ export default {
 }
 .green {
   background-color: #28B463;
-}
-.white {
-  background-color: #ffffff;
 }
 .MsSemiBold {
   font-family: 'Montserrat SemiBold';
