@@ -12,6 +12,7 @@
       <!--Indique le numéro de la questio en cours + l'énoncé de la question-->
       <div class="row justify-center">
         <h4 class="MsSemiBold">Question #{{ this.numQuestion }}/{{ this.NB_QUESTION }}<div class="MsBlack">Quelle est la capitale du pays : {{ this.pays }}</div></h4>
+        <q-btn :label=scoreJoueur.get></q-btn>
       </div>
 
       <!--Affiche les boutons actifs si il y a une question en cours-->
@@ -195,6 +196,14 @@ export default {
       this.capitale = ''
       this.pays = ''
       this.reponseQuestion = ''
+    }
+  },
+
+  computed: {
+    scoreJoueur: {
+      get () {
+        return this.$store.state.scoreJoueur
+      }
     }
   }
 }
