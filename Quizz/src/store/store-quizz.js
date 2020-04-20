@@ -1,31 +1,32 @@
-import store from "."
+import store from '.'
 
 const state = {
-    scoreJoueur: 0
+  scoreJoueur: 0
 }
 
 const getters = {
-    getScoreJoueur: state => state.scoreJoueur
+  getScoreJoueur: state => state.scoreJoueur
 }
 
 const mutations = {
-    ADD_POINT: (state) => {
-        state.scoreJoueur++
-    },
-    RESET_SCORE: (state) => {
-        state.scoreJoueur = 0
-    }
+  ADD_POINT: (state) => {
+    state.scoreJoueur++
+  },
+  RESET_SCORE: (state) => {
+    state.scoreJoueur = 0
+  }
 }
 
 const actions = {
-    addPoint: (state) => {
-        store.commit('ADD_POINT')
-    }
+  addPoint: (state) => {
+    store.commit('ADD_POINT')
+  }
 }
+
 export default {
-    namespaced: true,
-    state,
-    mutations,
-    getters,
-    actions
+  namespaced: true,
+  state,
+  mutations,
+  getters,
+  actions
 }

@@ -202,7 +202,7 @@ export default {
   computed: {
     scoreJoueur: {
       get () {
-        return this.$store.state.scoreJoueur
+        return 0
       }
     }
   }
