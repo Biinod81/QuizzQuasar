@@ -2,20 +2,22 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 // we first import the module
-import storeQuizz from './store-quizz'
+import quizzStore from './quizzStore'
 
 Vue.use(Vuex)
 
 export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
     modules: {
-      storeQuizz
+      // then we reference it
+      quizzStore
     },
 
     // enable strict mode (adds overhead!)
     // for dev mode only
-    strict: process.env.DEV
+    strict: false
   })
 
   return Store
 }
+

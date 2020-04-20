@@ -1,8 +1,9 @@
 <template>
 
   <div class="q-pa-xl" v-if="this.paysDejaSelectionne.length <= this.NB_QUESTION">
+    <q-btn>{{ this.getScoreJoueur }}</q-btn>
     <div class="MsSemiBold row justify-center">
-      <q-btn style="background: goldenrod; color: white" label="START" @click="choixPaysAleatoire(); afficherBtn()" v-if="!isStart"/>
+     <q-btn style="background: goldenrod; color: white" label="START" @click="choixPaysAleatoire(); afficherBtn()" v-if="!isStart"/>
       <q-btn style="background: #FF0080; color: white" label="RESET" @click="reset()" v-if="isStart"/>
       <q-btn style="background: goldenrod; color: white" label="SUIVANT" @click="choixPaysAleatoire(); viderChamp()" v-if="!questionEnCours"/>
     </div>
@@ -12,7 +13,6 @@
       <!--Indique le numéro de la questio en cours + l'énoncé de la question-->
       <div class="row justify-center">
         <h4 class="MsSemiBold">Question #{{ this.numQuestion }}/{{ this.NB_QUESTION }}<div class="MsBlack">Quelle est la capitale du pays : {{ this.pays }}</div></h4>
-        <q-btn :label=scoreJoueur.get></q-btn>
       </div>
 
       <!--Affiche les boutons actifs si il y a une question en cours-->
@@ -29,7 +29,6 @@
       </div>
 
       <!--Réponse à la question-->
-      <br><br><br>
       <div class="row justify-center" v-if="!this.hide">
         <div :class="{ green: success, red: !success }">
           <q-field outlined>
@@ -56,6 +55,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   data () {
     return {
@@ -200,11 +201,7 @@ export default {
   },
 
   computed: {
-    scoreJoueur: {
-      get () {
-        return 0
-      }
-    }
+    ...mapGetters('quizzStore', ['getScoreJoueur'])
   }
 }
 </script>
