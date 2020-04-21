@@ -10,3 +10,9 @@ export function NEXT_QUESTION (state) {
 export function RESET_NUM_QUESTION (state) {
   state.numQuestion = 1
 }
+export function SET_NB_QUESTION (state, n) {
+  state.NBQuestion = n
+}
+export function SET_NB_BOUTON (state, x) {
+  state.NbBTN = x
+}

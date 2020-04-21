@@ -1,55 +1,83 @@
 <template>
-
-  <div class="q-pa-xl" v-if="this.paysDejaSelectionne.length <= this.getNBQuestion">
-    <q-btn>SCORE DU JOUEUR : {{ this.getScoreJoueur }}</q-btn>
-    <div class="MsSemiBold row justify-center">
-     <q-btn style="background: goldenrod; color: white" label="START" @click="choixPaysAleatoire(); afficherBtn()" v-if="!isStart"/>
-      <q-btn style="background: #FF0080; color: white" label="RESET" @click="reset()" v-if="isStart"/>
-      <q-btn style="background: goldenrod; color: white" label="SUIVANT" @click="choixPaysAleatoire(); viderChamp()" v-if="!questionEnCours"/>
-    </div>
-    <!-- Corps du quizz (questions + boutons) -->
-    <div v-if="isStart">
-
-      <!--Indique le numéro de la questio en cours + l'énoncé de la question-->
-      <div class="row justify-center">
-        <h4 class="MsSemiBold">Question #{{ this.getNumQuestion }}/{{ this.getNBQuestion }}<div class="MsBlack">Quelle est la capitale du pays : {{ this.pays }}</div></h4>
-      </div>
-
-      <!--Affiche les boutons actifs si il y a une question en cours-->
-      <div v-if="this.questionEnCours">
-        <div class="q-gutter-xl row justify-center">
-            <q-btn class="MsSemiBold" color="white" text-color="black" v-for="indexBtn in this.tabCapitaleAleatoire" :key="indexBtn" :label=paysCapitales[indexBtn].capitale @click="verificationReponse($event)"/>
+  <div>
+    <!--Sélection du nombre de questions et de boutons-->
+    <div class="q-pa-xl" v-if=isSelect>
+      <div class="q-gutter-md row justify-center">
+        <div class="col-3">
+          <q-select outlined v-model="modelNbQuestion" :options="optionsNbQuestion" label="Nombre de questions" />
+        </div>
+        <div class="col-3">
+          <q-select outlined v-model="modelNbBouton" :options="optionsNbBoutons" label="Nombre de boutons" />
         </div>
       </div>
-      <!--Affiche les boutons désactivés si il n'y a pas de question en cours-->
-      <div v-else>
-        <div class="q-gutter-xl row justify-center">
-            <q-btn class="MsSemiBold" color="white" text-color="black" v-for="indexBtn in this.tabCapitaleAleatoire" :key="indexBtn" disabled :label=paysCapitales[indexBtn].capitale @click="verificationReponse($event)"/>
+      <br>
+      <!--Désactive le bouton START tant que le nombre de boutons et de questions n'a pas été sélectionné-->
+      <div class="q-gutter-lg MsSemiBold row justify-center" v-if="this.modelNbBouton === null || this.modelNbQuestion === null">
+          <q-btn style="background: goldenrod; color: white" disabled label="START" @click="choixPaysAleatoire(); afficherBtn()" v-if="!isStart"/>
+      </div>
+      <div class="q-gutter-lg MsSemiBold row justify-center" v-else>
+          <q-btn style="background: goldenrod; color: white" label="START" @click="choixPaysAleatoire(); afficherBtn()" v-if="!isStart"/>
+      </div>
+    </div>
+
+    <!--jeu-->
+    <div v-else>
+      <div class="q-pa-xl" v-if="this.paysDejaSelectionne.length <= this.getNBQuestion">
+        <!--score du joueur + bouton reset-->
+        <div class="q-gutter-md MsSemiBold row justify-end">
+          <div class="q-gutter-lg col-3">
+            <q-btn v-if="isStart">SCORE DU JOUEUR : {{ this.getScoreJoueur }}</q-btn>
+            <q-btn style="background: #FF0080; color: white" label="RESET" @click="reset()" v-if="isStart"/>
+          </div>
+        </div>
+        <!-- Corps du quizz (questions + boutons) -->
+        <div v-if="isStart">
+
+          <!--Indique le numéro de la questio en cours + l'énoncé de la question-->
+          <div class="row justify-center">
+            <h4 class="MsSemiBold">Question #{{ this.getNumQuestion }}/{{ this.getNBQuestion }}<div class="MsBlack">Quelle est la capitale du pays : {{ this.pays }}</div></h4>
+          </div>
+
+          <!--Affiche les boutons actifs si il y a une question en cours-->
+          <div v-if="this.questionEnCours">
+            <div class="q-gutter-xl row justify-center">
+                <q-btn class="MsSemiBold" color="white" text-color="black" v-for="indexBtn in this.tabCapitaleAleatoire" :key="indexBtn" :label=paysCapitales[indexBtn].capitale @click="verificationReponse($event)"/>
+            </div>
+          </div>
+          <!--Affiche les boutons désactivés si il n'y a pas de question en cours-->
+          <div v-else>
+            <div class="q-gutter-xl row justify-center">
+                <q-btn class="MsSemiBold" color="white" text-color="black" v-for="indexBtn in this.tabCapitaleAleatoire" :key="indexBtn" disabled :label=paysCapitales[indexBtn].capitale @click="verificationReponse($event)"/>
+            </div>
+          </div>
+
+          <br><br><br>
+          <!--Réponse à la question + bouton suivant-->
+          <div class="q-gutter-lg column items-center" v-if="!this.hide">
+            <div :class="{ green: success, red: !success }" class="col">
+              <q-field outlined>
+                <template v-slot:control>
+                  <div class="MsSemiBold" text-color="white"><b>{{ reponseQuestion }}</b></div>
+                </template>
+              </q-field>
+            </div>
+            <div class="MsSemiBold col">
+              <q-btn style="background: goldenrod; color: white" label="SUIVANT" @click="choixPaysAleatoire(); viderChamp()" v-if="!questionEnCours"/>
+            </div>
+          </div>
+
         </div>
       </div>
 
-      <br><br><br>
-      <!--Réponse à la question-->
-      <div class="row justify-center" v-if="!this.hide">
-        <div :class="{ green: success, red: !success }">
-          <q-field outlined>
-            <template v-slot:control>
-              <div class="MsSemiBold" text-color="white"><b>{{ reponseQuestion }}</b></div>
-            </template>
-          </q-field>
+      <!-- fin de partie -->
+      <div class="MsSemiBold q-pa-xl" v-else>
+        <div class="row justify-center">
+          <q-btn style="background: #FF0080; color: white" label="RESTART" @click="reset()" v-if="isStart"/>
+        </div>
+        <div class="row justify-center">
+          <h3>Score final : {{ this.getScoreJoueur }} / {{ this.getNBQuestion }}</h3>
         </div>
       </div>
-
-    </div>
-  </div>
-
-  <!-- fin de partie -->
-  <div class="q-pa-xl" v-else>
-    <div class="row justify-center">
-      <q-btn style="background: #FF0080; color: white" label="RESTART" @click="reset()" v-if="isStart"/>
-    </div>
-    <div class="MsSemiBold row justify-center">
-      <h3>Score final : {{ this.getScoreJoueur }} / {{ this.getNBQuestion }}</h3>
     </div>
   </div>
 
@@ -89,20 +117,33 @@ export default {
         { pays: 'Suisse', capitale: 'Berne' },
         { pays: 'Belgique', capitale: 'Bruxelles' }
       ],
+      modelNbQuestion: null,
+      modelNbBouton: null,
+      optionsNbQuestion: [
+        '5', '10', '15'
+      ],
+      optionsNbBoutons: [
+        '4', '6', '8'
+      ],
       paysDejaSelectionne: [], // stock l'index des pays déjà sélectionnés
-      tabCapitaleAleatoire: [],
-      NB_BTN: 4, // Nombre de boutons dispo pour l'utilisateur
+      tabCapitaleAleatoire: [], // stock les index pour choisir des capitales aléatoires
       reponseQuestion: '', // réponse de la réponse
       index: 0, // index permettant de choisir les capitales / pays
       pays: '',
       capitale: '',
       isStart: false, // VRAI si la partie a commencé, FAUX sinon
+      isSelect: true,
       questionEnCours: true, // VRAI si il y a une question en cours, FAUX sinon
       success: true, // VRAI = cadrant de la réponse VERT, FAUX = cadrant de la réponse ROUGE
       hide: true // cache le cadrant de la réponse à la question si VRAI, la dévoile si FAUX
     }
   },
   methods: {
+    // Permet d'afficher les boutons pour que le joueur puissent choisir une réponse
+    afficherBtn () {
+      this.isStart = true
+      this.isSelect = false
+    },
 
     // vérifie la réponse de l'utilisateur et show un text en fonction de la réponse
     verificationReponse: function (reponse) {
@@ -123,6 +164,8 @@ export default {
 
     // Choisis aléatoirement un pays parmis le tableau d'objet "paysCapitales"
     choixPaysAleatoire () {
+      this.setNbQuestion(this.modelNbQuestion)
+      this.setNbBouton(this.modelNbBouton)
       // reset le tableau des capitales aléatoires pour n'avoir que 4 bouttons affichés
       this.tabCapitaleAleatoire = []
 
@@ -135,7 +178,7 @@ export default {
       this.tabCapitaleAleatoire.push(this.index)
       let v
       // modifier NB_BTN pour modifier le nombre de boutons affichés
-      for (let i = 0; i < this.NB_BTN - 1; i++) {
+      for (let i = 0; i < this.getNbBTN - 1; i++) {
         do {
           v = Math.floor(Math.random() * Math.floor(this.paysCapitales.length))
         } while (this.tabCapitaleAleatoire.includes(v))
@@ -177,15 +220,13 @@ export default {
       this.hide = true
     },
 
-    // Permet d'afficher les boutons pour que le joueur puissent choisir une réponse
-    afficherBtn () {
-      this.isStart = true
-    },
-
     // Reset de toutes les valeurs pour pouvoir redémarrer une partie correctement
     reset () {
       console.clear()
+      this.modelNbBouton = null
+      this.modelNbQuestion = null
       this.isStart = false
+      this.isSelect = true
       this.questionEnCours = true
       this.hide = true
       this.resetPts()
@@ -196,11 +237,11 @@ export default {
       this.pays = ''
       this.reponseQuestion = ''
     },
-    ...mapActions('quizzStore', ['addPts', 'resetPts', 'nextQuestion', 'resetNumQuestion'])
+    ...mapActions('quizzStore', ['addPts', 'resetPts', 'nextQuestion', 'resetNumQuestion', 'setNbQuestion', 'setNbBouton'])
   },
 
   computed: {
-    ...mapGetters('quizzStore', ['getScoreJoueur', 'getNumQuestion', 'getNBQuestion'])
+    ...mapGetters('quizzStore', ['getScoreJoueur', 'getNumQuestion', 'getNBQuestion', 'getNbBTN'])
   }
 }
 </script>

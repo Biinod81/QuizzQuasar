@@ -7,3 +7,6 @@ export function getNumQuestion (state) {
 export function getNBQuestion (state) {
   return state.NBQuestion
 }
+export function getNbBTN (state) {
+  return state.NbBTN
+}
