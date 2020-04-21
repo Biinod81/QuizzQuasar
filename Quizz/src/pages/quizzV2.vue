@@ -132,7 +132,7 @@ export default {
       pays: '',
       capitale: '',
       isStart: false, // VRAI si la partie a commencé, FAUX sinon
-      isSelect: true,
+      isSelect: true, // VRAI si le joueur est en train de sélectionner le nb de bouton / question, FAUX si il est en train de jouer
       questionEnCours: true, // VRAI si il y a une question en cours, FAUX sinon
       success: true, // VRAI = cadrant de la réponse VERT, FAUX = cadrant de la réponse ROUGE
       hide: true // cache le cadrant de la réponse à la question si VRAI, la dévoile si FAUX
