@@ -1,7 +1,7 @@
 <template>
 
-  <div class="q-pa-xl" v-if="this.paysDejaSelectionne.length <= this.NB_QUESTION">
-    <q-btn>{{ this.getScoreJoueur }}</q-btn>
+  <div class="q-pa-xl" v-if="this.paysDejaSelectionne.length <= this.getNBQuestion">
+    <q-btn>SCORE DU JOUEUR : {{ this.getScoreJoueur }}</q-btn>
     <div class="MsSemiBold row justify-center">
      <q-btn style="background: goldenrod; color: white" label="START" @click="choixPaysAleatoire(); afficherBtn()" v-if="!isStart"/>
       <q-btn style="background: #FF0080; color: white" label="RESET" @click="reset()" v-if="isStart"/>
@@ -12,7 +12,7 @@
 
       <!--Indique le numéro de la questio en cours + l'énoncé de la question-->
       <div class="row justify-center">
-        <h4 class="MsSemiBold">Question #{{ this.numQuestion }}/{{ this.NB_QUESTION }}<div class="MsBlack">Quelle est la capitale du pays : {{ this.pays }}</div></h4>
+        <h4 class="MsSemiBold">Question #{{ this.getNumQuestion }}/{{ this.getNBQuestion }}<div class="MsBlack">Quelle est la capitale du pays : {{ this.pays }}</div></h4>
       </div>
 
       <!--Affiche les boutons actifs si il y a une question en cours-->
@@ -28,6 +28,7 @@
         </div>
       </div>
 
+      <br><br><br>
       <!--Réponse à la question-->
       <div class="row justify-center" v-if="!this.hide">
         <div :class="{ green: success, red: !success }">
@@ -48,14 +49,14 @@
       <q-btn style="background: #FF0080; color: white" label="RESTART" @click="reset()" v-if="isStart"/>
     </div>
     <div class="MsSemiBold row justify-center">
-      <h3>Score final : {{ this.score }} / {{ this.NB_QUESTION }}</h3>
+      <h3>Score final : {{ this.getScoreJoueur }} / {{ this.getNBQuestion }}</h3>
     </div>
   </div>
 
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   data () {
@@ -90,14 +91,11 @@ export default {
       ],
       paysDejaSelectionne: [], // stock l'index des pays déjà sélectionnés
       tabCapitaleAleatoire: [],
-      NB_QUESTION: 5, // Nombre total de questions posées
       NB_BTN: 4, // Nombre de boutons dispo pour l'utilisateur
       reponseQuestion: '', // réponse de la réponse
       index: 0, // index permettant de choisir les capitales / pays
       pays: '',
       capitale: '',
-      score: 0, // score du joueur
-      numQuestion: 1, // indique le numéro de la question
       isStart: false, // VRAI si la partie a commencé, FAUX sinon
       questionEnCours: true, // VRAI si il y a une question en cours, FAUX sinon
       success: true, // VRAI = cadrant de la réponse VERT, FAUX = cadrant de la réponse ROUGE
@@ -111,7 +109,7 @@ export default {
       // si VRAI, on augemente le score du joueur et passe success à TRUE pour afficher le cadrant de la réponse en vert
       if (reponse.target.textContent.toUpperCase() === this.capitale.toUpperCase()) {
         this.reponseQuestion = 'Bien joué !'
-        this.score++
+        this.addPts()
         this.success = true
       // si FAUX, on passe success à FALSE pour afficher le cadrant de la réponse en rouge
       } else {
@@ -175,7 +173,7 @@ export default {
     // Vide les champs explication et reponse pour que ce soit moins redondant pour l'utilisateur
     viderChamp () {
       this.reponseQuestion = ''
-      this.numQuestion++
+      this.nextQuestion()
       this.hide = true
     },
 
@@ -190,18 +188,19 @@ export default {
       this.isStart = false
       this.questionEnCours = true
       this.hide = true
-      this.score = 0
-      this.numQuestion = 1
+      this.resetPts()
+      this.resetNumQuestion()
       this.tabCapitaleAleatoire = []
       this.paysDejaSelectionne = []
       this.capitale = ''
       this.pays = ''
       this.reponseQuestion = ''
-    }
+    },
+    ...mapActions('quizzStore', ['addPts', 'resetPts', 'nextQuestion', 'resetNumQuestion'])
   },
 
   computed: {
-    ...mapGetters('quizzStore', ['getScoreJoueur'])
+    ...mapGetters('quizzStore', ['getScoreJoueur', 'getNumQuestion', 'getNBQuestion'])
   }
 }
 </script>

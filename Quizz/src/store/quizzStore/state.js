@@ -1,4 +1,5 @@
 export default {
-  scoreJoueur: 0
+  scoreJoueur: 0,
+  numQuestion: 1,
+  NBQuestion: 10
 }
-
