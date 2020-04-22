@@ -4,6 +4,8 @@
     <div class="q-pa-xl" v-if=isSelect>
       <div class="q-gutter-md row justify-center">
         <div class="col-3">
+          <q-btn @click="loadData()" label="TEST"></q-btn>
+          <q-btn style="background: #FF0080; color: white" label="CLEAR" @click="clear()"/>
           <q-select outlined v-model="modelNbQuestion" :options="optionsNbQuestion" label="Nombre de questions" />
         </div>
         <div class="col-3">
@@ -212,6 +214,9 @@ export default {
       }
       return tab
     },
+    clear () {
+      console.clear()
+    },
 
     // Vide les champs explication et reponse pour que ce soit moins redondant pour l'utilisateur
     viderChamp () {
@@ -236,6 +241,16 @@ export default {
       this.capitale = ''
       this.pays = ''
       this.reponseQuestion = ''
+    },
+
+    loadData () {
+      this.$axios.get('https://restcountries.eu/rest/v2/name/france?fields=name;capital')
+        .then(response => {
+          console.log(response)
+        })
+        .catch(error => {
+          console.log(error)
+        })
     },
     ...mapActions('quizzStore', ['addPts', 'resetPts', 'nextQuestion', 'resetNumQuestion', 'setNbQuestion', 'setNbBouton'])
   },
