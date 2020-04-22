@@ -4,8 +4,6 @@
     <div class="q-pa-xl" v-if=isSelect>
       <div class="q-gutter-md row justify-center">
         <div class="col-3">
-          <q-btn @click="loadData()" label="TEST"></q-btn>
-          <q-btn style="background: #FF0080; color: white" label="CLEAR" @click="clear()"/>
           <q-select outlined v-model="modelNbQuestion" :options="optionsNbQuestion" label="Nombre de questions" />
         </div>
         <div class="col-3">
@@ -15,10 +13,11 @@
       <br>
       <!--Désactive le bouton START tant que le nombre de boutons et de questions n'a pas été sélectionné-->
       <div class="q-gutter-lg MsSemiBold row justify-center" v-if="this.modelNbBouton === null || this.modelNbQuestion === null">
-          <q-btn style="background: goldenrod; color: white" disabled label="START" @click="choixPaysAleatoire(); afficherBtn()" v-if="!isStart"/>
+          <q-btn style="background: goldenrod; color: white" disabled label="VALIDER"/>
       </div>
       <div class="q-gutter-lg MsSemiBold row justify-center" v-else>
-          <q-btn style="background: goldenrod; color: white" label="START" @click="choixPaysAleatoire(); afficherBtn()" v-if="!isStart"/>
+          <q-btn style="background: goldenrod; color: white" label="VALIDER" @click="activerStart(); loadData()" v-if="!actif"/>
+          <q-btn style="background: goldenrod; color: white" label="START" @click="choixPaysAleatoire(); afficherBtn()" v-if="actif"/>
       </div>
     </div>
 
@@ -43,13 +42,13 @@
           <!--Affiche les boutons actifs si il y a une question en cours-->
           <div v-if="this.questionEnCours">
             <div class="q-gutter-xl row justify-center">
-                <q-btn class="MsSemiBold" color="white" text-color="black" v-for="indexBtn in this.tabCapitaleAleatoire" :key="indexBtn" :label=paysCapitales[indexBtn].capitale @click="verificationReponse($event)"/>
+                <q-btn class="MsSemiBold" color="white" text-color="black" v-for="indexBtn in this.tabCapitaleAleatoire" :key="indexBtn" :label=tabCapitales[indexBtn] @click="verificationReponse($event)"/>
             </div>
           </div>
           <!--Affiche les boutons désactivés si il n'y a pas de question en cours-->
           <div v-else>
             <div class="q-gutter-xl row justify-center">
-                <q-btn class="MsSemiBold" color="white" text-color="black" v-for="indexBtn in this.tabCapitaleAleatoire" :key="indexBtn" disabled :label=paysCapitales[indexBtn].capitale @click="verificationReponse($event)"/>
+                <q-btn class="MsSemiBold" color="white" text-color="black" v-for="indexBtn in this.tabCapitaleAleatoire" :key="indexBtn" disabled :label=tabCapitales[indexBtn] @click="verificationReponse($event)"/>
             </div>
           </div>
 
@@ -91,34 +90,6 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   data () {
     return {
-      paysCapitales: [
-        { pays: 'France', capitale: 'Paris' },
-        { pays: 'Espagne', capitale: 'Madrid' },
-        { pays: 'Angleterre', capitale: 'Londres' },
-        { pays: 'Italie', capitale: 'Rome' },
-        { pays: 'Norvège', capitale: 'Oslo' },
-        { pays: 'Singapour', capitale: 'Singapour' },
-        { pays: 'Autriche', capitale: 'Viennes' },
-        { pays: 'Australie', capitale: 'Canberra' },
-        { pays: 'Japon', capitale: 'Tokyo' },
-        { pays: 'Thaïlande', capitale: 'Bangkok' },
-        { pays: 'Gabon', capitale: 'Libreville' },
-        { pays: 'Chili', capitale: 'Santiago' },
-        { pays: 'Corée du Sud', capitale: 'Séoul' },
-        { pays: 'Mali', capitale: 'Bamako' },
-        { pays: 'Grèce', capitale: 'Athène' },
-        { pays: 'Liban', capitale: 'Beyrouth' },
-        { pays: 'Philippines', capitale: 'Manille' },
-        { pays: 'Mozambique', capitale: 'Maputo' },
-        { pays: 'Yémen', capitale: 'Sanaa' },
-        { pays: 'Biélorussie', capitale: 'Minsk' },
-        { pays: 'Croatie', capitale: 'Zagreb' },
-        { pays: 'Nouvelle-Zélande', capitale: 'Wellington' },
-        { pays: 'Maroc', capitale: 'Rabat' },
-        { pays: 'Cuba', capitale: 'La Havane' },
-        { pays: 'Suisse', capitale: 'Berne' },
-        { pays: 'Belgique', capitale: 'Bruxelles' }
-      ],
       modelNbQuestion: null,
       modelNbBouton: null,
       optionsNbQuestion: [
@@ -127,12 +98,15 @@ export default {
       optionsNbBoutons: [
         '4', '6', '8'
       ],
+      tabPays: [], // tableau contenant les pays
+      tabCapitales: [], // tableau contenant les capitales
       paysDejaSelectionne: [], // stock l'index des pays déjà sélectionnés
       tabCapitaleAleatoire: [], // stock les index pour choisir des capitales aléatoires
       reponseQuestion: '', // réponse de la réponse
       index: 0, // index permettant de choisir les capitales / pays
       pays: '',
       capitale: '',
+      actif: false,
       isStart: false, // VRAI si la partie a commencé, FAUX sinon
       isSelect: true, // VRAI si le joueur est en train de sélectionner le nb de bouton / question, FAUX si il est en train de jouer
       questionEnCours: true, // VRAI si il y a une question en cours, FAUX sinon
@@ -172,7 +146,7 @@ export default {
       this.tabCapitaleAleatoire = []
 
       do { // Permet de ne pas choisir 2 fois le même pays
-        this.index = Math.floor(Math.random() * Math.floor(this.paysCapitales.length)) // Choisis un index aléatoirement
+        this.index = Math.floor(Math.random() * Math.floor(this.tabPays.length)) // Choisis un index aléatoirement
         console.log('Index sélectionné : ' + this.index) // renvoie l'index qui a été choisis
       } while (this.paysDejaSelectionne.includes(this.index))
 
@@ -182,7 +156,7 @@ export default {
       // modifier NB_BTN pour modifier le nombre de boutons affichés
       for (let i = 0; i < this.getNbBTN - 1; i++) {
         do {
-          v = Math.floor(Math.random() * Math.floor(this.paysCapitales.length))
+          v = Math.floor(Math.random() * Math.floor(this.tabPays.length))
         } while (this.tabCapitaleAleatoire.includes(v))
         this.tabCapitaleAleatoire.push(v)
       }
@@ -191,8 +165,8 @@ export default {
       console.log('Index des Pays déjà sélectionné : ' + this.paysDejaSelectionne)
       console.log('Tab des capitales aléatoire : ' + this.tabCapitaleAleatoire)
 
-      this.capitale = this.paysCapitales[this.index].capitale // attribut la capitale choisie aléatoirement
-      this.pays = this.paysCapitales[this.index].pays // attribut le pays choisi aléatoirement
+      this.capitale = this.tabCapitales[this.index] // attribut la capitale choisie aléatoirement
+      this.pays = this.tabPays[this.index] // attribut le pays choisi aléatoirement
       console.log('capitales : ' + this.capitale) // renvoie la capitale qui a été choisie
       console.log('pays : ' + this.pays) // renvoie la pays qui a été choisi
 
@@ -214,9 +188,6 @@ export default {
       }
       return tab
     },
-    clear () {
-      console.clear()
-    },
 
     // Vide les champs explication et reponse pour que ce soit moins redondant pour l'utilisateur
     viderChamp () {
@@ -225,7 +196,11 @@ export default {
       this.hide = true
     },
 
-    // Reset de toutes les valeurs pour pouvoir redémarrer une partie correctement
+    activerStart () {
+      this.actif = true
+    },
+
+    // Reset toutes les valeurs pour pouvoir redémarrer une partie correctement
     reset () {
       console.clear()
       this.modelNbBouton = null
@@ -234,25 +209,35 @@ export default {
       this.isSelect = true
       this.questionEnCours = true
       this.hide = true
+      this.actif = false
       this.resetPts()
       this.resetNumQuestion()
       this.tabCapitaleAleatoire = []
       this.paysDejaSelectionne = []
+      this.tabPays = []
+      this.tabCapitales = []
       this.capitale = ''
       this.pays = ''
       this.reponseQuestion = ''
     },
 
     loadData () {
-      this.$axios.get('https://restcountries.eu/rest/v2/name/france?fields=name;capital')
+      this.$axios.get('https://restcountries.eu/rest/v2')
         .then(response => {
-          console.log(response)
+          for (let i = 0; i < 249; i++) {
+            if (response.data[i].capital === '') {
+              console.log('Pas de capitale')
+            } else {
+              this.tabCapitales.push(response.data[i].capital)
+              this.tabPays.push(response.data[i].translations.fr)
+            }
+          }
         })
         .catch(error => {
           console.log(error)
         })
     },
-    ...mapActions('quizzStore', ['addPts', 'resetPts', 'nextQuestion', 'resetNumQuestion', 'setNbQuestion', 'setNbBouton'])
+    ...mapActions('quizzStore', ['addPts', 'resetPts', 'nextQuestion', 'resetNumQuestion', 'setNbQuestion', 'setNbBouton', 'loadDataAction'])
   },
 
   computed: {
