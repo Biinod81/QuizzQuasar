@@ -3,10 +3,10 @@
     <!--Sélection du nombre de questions et de boutons-->
     <div class="q-pa-xl" v-if=isSelect>
       <div class="q-gutter-md row justify-center">
-        <div class="col-3">
+        <div class="col-2">
           <q-select outlined v-model="modelNbQuestion" :options="optionsNbQuestion" label="Nombre de questions" />
         </div>
-        <div class="col-3">
+        <div class="col-2">
           <q-select outlined v-model="modelNbBouton" :options="optionsNbBoutons" label="Nombre de boutons" />
         </div>
       </div>
@@ -16,7 +16,7 @@
           <q-btn color="secondary" disabled label="VALIDER"/>
       </div>
       <div class="q-gutter-lg MsSemiBold row justify-center" v-else>
-          <q-btn color="secondary" label="VALIDER" @click="activerStart(); loadData()" v-if="!actif"/>
+          <q-btn color="secondary" label="VALIDER" @click="actif = true; loadData()" v-if="!actif"/>
           <q-btn color="secondary" label="START" @click="choixPaysAleatoire(); afficherBtn()" v-if="actif"/>
       </div>
     </div>
@@ -202,10 +202,6 @@ export default {
       this.reponseQuestion = ''
       this.nextQuestion()
       this.hide = true
-    },
-
-    activerStart () {
-      this.actif = true
     },
 
     // Reset toutes les valeurs pour pouvoir redémarrer une partie correctement
