@@ -13,11 +13,11 @@
       <br>
       <!--Désactive le bouton START tant que le nombre de boutons et de questions n'a pas été sélectionné-->
       <div class="q-gutter-lg MsSemiBold row justify-center" v-if="this.modelNbBouton === null || this.modelNbQuestion === null">
-          <q-btn style="background: goldenrod; color: white" disabled label="VALIDER"/>
+          <q-btn color="secondary" disabled label="VALIDER"/>
       </div>
       <div class="q-gutter-lg MsSemiBold row justify-center" v-else>
-          <q-btn style="background: goldenrod; color: white" label="VALIDER" @click="activerStart(); loadData()" v-if="!actif"/>
-          <q-btn style="background: goldenrod; color: white" label="START" @click="choixPaysAleatoire(); afficherBtn()" v-if="actif"/>
+          <q-btn color="secondary" label="VALIDER" @click="activerStart(); loadData()" v-if="!actif"/>
+          <q-btn color="secondary" label="START" @click="choixPaysAleatoire(); afficherBtn()" v-if="actif"/>
       </div>
     </div>
 
@@ -62,7 +62,7 @@
               </q-field>
             </div>
             <div class="MsSemiBold col">
-              <q-btn style="background: goldenrod; color: white" label="SUIVANT" @click="choixPaysAleatoire(); viderChamp()" v-if="!questionEnCours"/>
+              <q-btn color="primary" label="SUIVANT" @click="choixPaysAleatoire(); viderChamp()" v-if="!questionEnCours"/>
             </div>
           </div>
 
@@ -72,10 +72,19 @@
       <!-- fin de partie -->
       <div class="MsBlack q-pa-xl" v-else>
         <div class="row justify-center">
-          <q-btn style="background: #FF0080; color: white" label="RESTART" @click="reset()" v-if="isStart"/>
+          <q-btn color="accent" label="RESTART" @click="reset()" v-if="isStart"/>
         </div>
-        <div class="row justify-center">
-          <h4>Score final : {{ this.getScoreJoueur }} / {{ this.getNBQuestion }}</h4>
+        <div class="column items-center" style="height: 100px">
+          <h4 class="col">Score final : {{ this.getScoreJoueur }} / {{ this.getNBQuestion }}</h4>
+          <div class="col" v-if="this.getScoreJoueur == this.getNBQuestion">
+            <h5>Bravo, score parfait !</h5>
+          </div>
+          <div class="col" v-else-if="this.getScoreJoueur === 0">
+            <h5>Dommage, la prochaine fois peut-être :/</h5>
+          </div>
+          <div class="col " v-else-if="this.getScoreJoueur < this.getNBQuestion">
+            <h5>Pas mal ! Peut mieux faire.</h5>
+          </div>
         </div>
       </div>
     </div>
@@ -116,6 +125,8 @@ export default {
     afficherBtn () {
       this.isStart = true
       this.isSelect = false
+      this.resetPts()
+      this.resetNumQuestion()
     },
 
     // vérifie la réponse de l'utilisateur et show un text en fonction de la réponse
