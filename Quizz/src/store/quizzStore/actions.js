@@ -18,19 +18,22 @@ export function setNbQuestion (context, n) {
 export function setNbBouton (context, x) {
   context.commit('SET_NB_BOUTON', x)
 }
-export function loadDataAction () {
+// récupère tous les pays / capitales de restcountries
+export function loadData (context) {
   return axios.get('https://restcountries.eu/rest/v2')
     .then(response => {
       for (let i = 0; i < 249; i++) {
-        if (response.data[i].capital === '') {
-          console.log('Pas de capitale')
-        } else {
-          this.tabCapitales.push(response.data[i].capital)
-          this.tabPays.push(response.data[i].translations.fr)
+        // permet de ne pas choisir les pays sans capitales (pour ne pas avoir de bouton vide)
+        if (response.data[i].capital !== '') {
+          context.commit('PUSH_CAPITALE', response.data[i].capital)
+          context.commit('PUSH_PAYS', response.data[i].translations.fr)
         }
       }
     })
     .catch(error => {
       console.log(error)
     })
+}
+export function resetTab (context) {
+  context.commit('RESET_TAB')
 }

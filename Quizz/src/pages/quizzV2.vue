@@ -16,7 +16,7 @@
           <q-btn style="background: goldenrod; color: white" disabled label="VALIDER"/>
       </div>
       <div class="q-gutter-lg MsSemiBold row justify-center" v-else>
-          <q-btn style="background: goldenrod; color: white" label="VALIDER" @click="activerStart(); loadData()" v-if="!actif"/>
+          <q-btn style="background: goldenrod; color: white" label="VALIDER" @click="activerStart(); loadDataAction()" v-if="!actif"/>
           <q-btn style="background: goldenrod; color: white" label="START" @click="choixPaysAleatoire(); afficherBtn()" v-if="actif"/>
       </div>
     </div>
@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapState } from 'vuex'
 
 export default {
   data () {
@@ -98,15 +98,13 @@ export default {
       optionsNbBoutons: [
         '4', '6', '8'
       ],
-      tabPays: [], // tableau contenant les pays
-      tabCapitales: [], // tableau contenant les capitales
       paysDejaSelectionne: [], // stock l'index des pays déjà sélectionnés
       tabCapitaleAleatoire: [], // stock les index pour choisir des capitales aléatoires
       reponseQuestion: '', // réponse de la réponse
       index: 0, // index permettant de choisir les capitales / pays
-      pays: '',
-      capitale: '',
-      actif: false,
+      pays: '', // string contenant le pays choisis aléatoirement
+      capitale: '', // string contenant la capitale choisis aléatoirement
+      actif: false, // VRAI si le bouton start est actif, FAUX sinon
       isStart: false, // VRAI si la partie a commencé, FAUX sinon
       isSelect: true, // VRAI si le joueur est en train de sélectionner le nb de bouton / question, FAUX si il est en train de jouer
       questionEnCours: true, // VRAI si il y a une question en cours, FAUX sinon
@@ -212,36 +210,20 @@ export default {
       this.actif = false
       this.resetPts()
       this.resetNumQuestion()
+      this.resetTab()
       this.tabCapitaleAleatoire = []
       this.paysDejaSelectionne = []
-      this.tabPays = []
-      this.tabCapitales = []
       this.capitale = ''
       this.pays = ''
       this.reponseQuestion = ''
     },
 
-    loadData () {
-      this.$axios.get('https://restcountries.eu/rest/v2')
-        .then(response => {
-          for (let i = 0; i < 249; i++) {
-            if (response.data[i].capital === '') {
-              console.log('Pas de capitale')
-            } else {
-              this.tabCapitales.push(response.data[i].capital)
-              this.tabPays.push(response.data[i].translations.fr)
-            }
-          }
-        })
-        .catch(error => {
-          console.log(error)
-        })
-    },
-    ...mapActions('quizzStore', ['addPts', 'resetPts', 'nextQuestion', 'resetNumQuestion', 'setNbQuestion', 'setNbBouton', 'loadDataAction'])
+    ...mapActions('quizzStore', ['addPts', 'resetPts', 'nextQuestion', 'resetNumQuestion', 'setNbQuestion', 'setNbBouton', 'loadData', 'resetTab'])
   },
 
   computed: {
-    ...mapGetters('quizzStore', ['getScoreJoueur', 'getNumQuestion', 'getNBQuestion', 'getNbBTN'])
+    ...mapGetters('quizzStore', ['getScoreJoueur', 'getNumQuestion', 'getNBQuestion', 'getNbBTN', 'getTabCapitales', 'getTabPays']),
+    ...mapState('quizzStore', ['tabCapitales', 'tabPays'])
   }
 }
 </script>

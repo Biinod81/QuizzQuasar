@@ -10,3 +10,9 @@ export function getNBQuestion (state) {
 export function getNbBTN (state) {
   return state.NbBTN
 }
+export function getTabCapitales (state) {
+  return state.tabCapitales
+}
+export function getTabPays (state) {
+  return state.tabPays
+}
