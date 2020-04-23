@@ -16,7 +16,7 @@
           <q-btn style="background: goldenrod; color: white" disabled label="VALIDER"/>
       </div>
       <div class="q-gutter-lg MsSemiBold row justify-center" v-else>
-          <q-btn style="background: goldenrod; color: white" label="VALIDER" @click="activerStart(); loadDataAction()" v-if="!actif"/>
+          <q-btn style="background: goldenrod; color: white" label="VALIDER" @click="activerStart(); loadData()" v-if="!actif"/>
           <q-btn style="background: goldenrod; color: white" label="START" @click="choixPaysAleatoire(); afficherBtn()" v-if="actif"/>
       </div>
     </div>
@@ -27,8 +27,7 @@
         <!--score du joueur + bouton reset-->
         <div class="q-gutter-md MsSemiBold row justify-end">
           <div class="q-gutter-lg col-3">
-            <q-btn v-if="isStart">SCORE DU JOUEUR : {{ this.getScoreJoueur }}</q-btn>
-            <q-btn style="background: #FF0080; color: white" label="RESET" @click="reset()" v-if="isStart"/>
+            <q-btn v-if="isStart">SCORE : {{ this.getScoreJoueur }}</q-btn>
           </div>
         </div>
         <!-- Corps du quizz (questions + boutons) -->
@@ -71,12 +70,12 @@
       </div>
 
       <!-- fin de partie -->
-      <div class="MsSemiBold q-pa-xl" v-else>
+      <div class="MsBlack q-pa-xl" v-else>
         <div class="row justify-center">
           <q-btn style="background: #FF0080; color: white" label="RESTART" @click="reset()" v-if="isStart"/>
         </div>
         <div class="row justify-center">
-          <h3>Score final : {{ this.getScoreJoueur }} / {{ this.getNBQuestion }}</h3>
+          <h4>Score final : {{ this.getScoreJoueur }} / {{ this.getNBQuestion }}</h4>
         </div>
       </div>
     </div>
