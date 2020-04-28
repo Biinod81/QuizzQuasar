@@ -2,6 +2,7 @@
   <div>
     <!--Sélection du nombre de questions et de boutons-->
     <div class="q-pa-xl" v-if=isSelect>
+      <chrono></chrono>
       <div class="q-gutter-md row justify-center">
         <div class="col-2">
           <q-select outlined v-model="modelNbQuestion" :options="optionsNbQuestion" label="Nombre de questions" />
@@ -94,6 +95,7 @@
 
 <script>
 import { mapGetters, mapActions, mapState } from 'vuex'
+import chrono from 'components/chrono.vue'
 
 export default {
   data () {
@@ -230,6 +232,10 @@ export default {
   computed: {
     ...mapGetters('quizzStore', ['getScoreJoueur', 'getNumQuestion', 'getNBQuestion', 'getNbBTN', 'getTabCapitales', 'getTabPays']),
     ...mapState('quizzStore', ['tabCapitales', 'tabPays'])
+  },
+
+  components: {
+    chrono
   }
 }
 </script>
