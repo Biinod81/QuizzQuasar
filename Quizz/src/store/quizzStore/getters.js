@@ -16,3 +16,12 @@ export function getTabCapitales (state) {
 export function getTabPays (state) {
   return state.tabPays
 }
+export function getMinutes (state) {
+  return state.minutes
+}
+export function getSecondes (state) {
+  return state.secondes
+}
+export function getIsStoped (state) {
+  return state.isStoped
+}

@@ -1,9 +1,11 @@
 <template>
   <div>
     <!--Sélection du nombre de questions et de boutons-->
+    <div class="q-gutter-md row MsSemiBold justify-center">
+      <chrono ref="chrono"></chrono>
+    </div>
     <div class="q-pa-xl" v-if=isSelect>
-      <chrono></chrono>
-      <div class="q-gutter-md row justify-center">
+      <div class="q-gutter-md row justif  y-center">
         <div class="col-2">
           <q-select outlined v-model="modelNbQuestion" :options="optionsNbQuestion" label="Nombre de questions" />
         </div>
@@ -18,7 +20,7 @@
       </div>
       <div class="q-gutter-lg MsSemiBold row justify-center" v-else>
           <q-btn color="secondary" label="VALIDER" @click="actif = true; loadData()" v-if="!actif"/>
-          <q-btn color="secondary" label="START" @click="choixPaysAleatoire(); afficherBtn()" v-if="actif"/>
+          <q-btn color="secondary" label="START" @click="choixPaysAleatoire(); afficherBtn(); startChrono()" v-if="actif"/>
       </div>
     </div>
 
@@ -73,7 +75,7 @@
       <!-- fin de partie -->
       <div class="MsBlack q-pa-xl" v-else>
         <div class="row justify-center">
-          <q-btn color="accent" label="RESTART" @click="reset()" v-if="isStart"/>
+          <q-btn color="accent" label="RESTART" @click="reset(); resetChrono()" v-if="isStart"/>
         </div>
         <div class="column items-center" style="height: 100px">
           <h4 class="col">Score final : {{ this.getScoreJoueur }} / {{ this.getNBQuestion }}</h4>
@@ -157,7 +159,7 @@ export default {
 
       do { // Permet de ne pas choisir 2 fois le même pays
         this.index = Math.floor(Math.random() * Math.floor(this.tabPays.length)) // Choisis un index aléatoirement
-        console.log('Index sélectionné : ' + this.index) // renvoie l'index qui a été choisis
+        // console.log('Index sélectionné : ' + this.index) // renvoie l'index qui a été choisis
       } while (this.paysDejaSelectionne.includes(this.index))
 
       this.paysDejaSelectionne.push(this.index)
@@ -172,13 +174,13 @@ export default {
       }
       // Mélange le tableau des capitales de façon à ne pas avoir la réponse sur le même bouton
       this.shuffle(this.tabCapitaleAleatoire)
-      console.log('Index des Pays déjà sélectionné : ' + this.paysDejaSelectionne)
-      console.log('Tab des capitales aléatoire : ' + this.tabCapitaleAleatoire)
+      // console.log('Index des Pays déjà sélectionné : ' + this.paysDejaSelectionne)
+      // console.log('Tab des capitales aléatoire : ' + this.tabCapitaleAleatoire)
 
       this.capitale = this.tabCapitales[this.index] // attribut la capitale choisie aléatoirement
       this.pays = this.tabPays[this.index] // attribut le pays choisi aléatoirement
-      console.log('capitales : ' + this.capitale) // renvoie la capitale qui a été choisie
-      console.log('pays : ' + this.pays) // renvoie la pays qui a été choisi
+      // console.log('capitales : ' + this.capitale) // renvoie la capitale qui a été choisie
+      // console.log('pays : ' + this.pays) // renvoie la pays qui a été choisi
 
       this.questionEnCours = true
     },
@@ -201,9 +203,14 @@ export default {
 
     // Vide les champs explication et reponse pour que ce soit moins redondant pour l'utilisateur
     viderChamp () {
+      if (this.paysDejaSelectionne.length > this.getNBQuestion) {
+        this.$refs.chrono.stop()
+      }
       this.reponseQuestion = ''
       this.nextQuestion()
       this.hide = true
+      console.log('num question ' + this.getNumQuestion)
+      console.log('nbQuestion ' + this.getNBQuestion)
     },
 
     // Reset toutes les valeurs pour pouvoir redémarrer une partie correctement
@@ -224,6 +231,14 @@ export default {
       this.capitale = ''
       this.pays = ''
       this.reponseQuestion = ''
+    },
+
+    startChrono () {
+      this.$refs.chrono.start()
+    },
+
+    resetChrono () {
+      this.$refs.chrono.reset()
     },
 
     ...mapActions('quizzStore', ['addPts', 'resetPts', 'nextQuestion', 'resetNumQuestion', 'setNbQuestion', 'setNbBouton', 'loadData', 'resetTab'])

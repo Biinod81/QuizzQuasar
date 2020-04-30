@@ -1,49 +1,64 @@
 <template>
   <div>
-    <div>
-      <span>{{ minutes }} : {{ secondes }}</span>
-    </div>
-    <q-btn @click="start" label="START"></q-btn>
-    <q-btn @click="stop" label="STOP"></q-btn>
-    <q-btn @click="reset" label="RESET"></q-btn>
+    <q-field outlined :dense="dense">
+      <template v-slot:prepend>
+        <q-icon name="timer" />
+      </template>
+
+      <template v-slot:control>
+        <div class="self-center full-width no-outline">{{ minutes }} : {{ secondes }}</div>
+      </template>
+    </q-field>
   </div>
 </template>
 
 <script>
-
 export default {
   data () {
     return {
-      minutes: 0,
-      secondes: 0,
-      isStoped: true
+      minutes: '00',
+      secondes: '00',
+      isStoped: true,
+      x: null
     }
   },
   methods: {
+    // fait en sorte de compter en secondes et en minutes
     compteur () {
       if (this.isStoped === false) {
-        setTimeout(this.secondes++, 1000)
+        setTimeout(this.secondes = this.zeroPrefix(this.secondes), 1000)
         if (this.secondes === 60) {
-          setTimeout(this.minutes++, 1000)
-          this.secondes = 0
+          this.minutes = this.zeroPrefix(this.minutes)
+          this.secondes = '00'
         }
       }
     },
+    // start le chrono
     start () {
       this.isStoped = false
       this.timer()
     },
+    // stop le chrono
     stop () {
       this.isStoped = true
+      clearInterval(this.x)
     },
     reset () {
-      console.log('reset')
-      console.clear()
-      this.secondes = 0
-      this.minutes = 0
+      this.secondes = '00'
+      this.minutes = '00'
     },
+    // place un 0 avant chaque chiffre entre 0-9 pour avoir '01' au lieux de '1'
+    zeroPrefix: function (v) {
+      if (v > 8) {
+        v++
+      } else {
+        v = '0' + ++v
+      }
+      return v
+    },
+    // permet de compter à chaque secondes
     timer () {
-      setInterval(this.compteur, 1000)
+      this.x = setInterval(this.compteur, 1000)
     }
   }
 }

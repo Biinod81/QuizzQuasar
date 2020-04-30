@@ -4,5 +4,8 @@ export default {
   NBQuestion: 3,
   NbBTN: 4,
   tabCapitales: [],
-  tabPays: []
+  tabPays: [],
+  minutes: 0,
+  secondes: 0,
+  isStoped: true
 }
