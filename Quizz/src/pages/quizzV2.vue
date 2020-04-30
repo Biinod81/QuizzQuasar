@@ -5,7 +5,7 @@
       <chrono ref="chrono"></chrono>
     </div>
     <div class="q-pa-xl" v-if=isSelect>
-      <div class="q-gutter-md row justif  y-center">
+      <div class="q-gutter-md row justify-center">
         <div class="col-2">
           <q-select outlined v-model="modelNbQuestion" :options="optionsNbQuestion" label="Nombre de questions" />
         </div>
@@ -105,7 +105,7 @@ export default {
       modelNbQuestion: null,
       modelNbBouton: null,
       optionsNbQuestion: [
-        '5', '10', '15'
+        '5', '10', '15', '20', '25', '30'
       ],
       optionsNbBoutons: [
         '4', '6', '8'
@@ -152,6 +152,7 @@ export default {
 
     // Choisis aléatoirement un pays parmis le tableau d'objet "paysCapitales"
     choixPaysAleatoire () {
+      // attribut le nombre de questions et de boutons choisis par le joueur
       this.setNbQuestion(this.modelNbQuestion)
       this.setNbBouton(this.modelNbBouton)
       // reset le tableau des capitales aléatoires pour n'avoir que 4 bouttons affichés
@@ -159,7 +160,6 @@ export default {
 
       do { // Permet de ne pas choisir 2 fois le même pays
         this.index = Math.floor(Math.random() * Math.floor(this.tabPays.length)) // Choisis un index aléatoirement
-        // console.log('Index sélectionné : ' + this.index) // renvoie l'index qui a été choisis
       } while (this.paysDejaSelectionne.includes(this.index))
 
       this.paysDejaSelectionne.push(this.index)
@@ -174,13 +174,9 @@ export default {
       }
       // Mélange le tableau des capitales de façon à ne pas avoir la réponse sur le même bouton
       this.shuffle(this.tabCapitaleAleatoire)
-      // console.log('Index des Pays déjà sélectionné : ' + this.paysDejaSelectionne)
-      // console.log('Tab des capitales aléatoire : ' + this.tabCapitaleAleatoire)
 
       this.capitale = this.tabCapitales[this.index] // attribut la capitale choisie aléatoirement
       this.pays = this.tabPays[this.index] // attribut le pays choisi aléatoirement
-      // console.log('capitales : ' + this.capitale) // renvoie la capitale qui a été choisie
-      // console.log('pays : ' + this.pays) // renvoie la pays qui a été choisi
 
       this.questionEnCours = true
     },
@@ -203,6 +199,7 @@ export default {
 
     // Vide les champs explication et reponse pour que ce soit moins redondant pour l'utilisateur
     viderChamp () {
+      // stop le chronomètre si la partie est fini
       if (this.paysDejaSelectionne.length > this.getNBQuestion) {
         this.$refs.chrono.stop()
       }

@@ -23,9 +23,9 @@ export default {
     }
   },
   methods: {
-    // fait en sorte de compter en secondes et en minutes
     compteur () {
       if (this.isStoped === false) {
+        // compte une seconde
         setTimeout(this.secondes = this.zeroPrefix(this.secondes), 1000)
         if (this.secondes === 60) {
           this.minutes = this.zeroPrefix(this.minutes)
