@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-dialog v-model="showHelpDialog">
+    <q-dialog v-model="showRuleDialog">
         <q-card>
             <q-card-section>
             <div class="text-h6">Jeu des capitales - Règles du jeu</div>
@@ -24,12 +24,28 @@
 export default {
   data () {
     return {
-      showHelpDialog: false
+      showRuleDialog: false,
+      alreadyShown: false,
+      counter: 0
     }
   },
+
+  created () {
+    console.log('created from Rules')
+  },
+
+  destroyed () {
+    console.log('destroyed from Rules')
+    this.$emit('blockRuleDialog')
+  },
+
   methods: {
-    toggleShowHelpDialog () {
-      this.showHelpDialog = !this.showHelpDialog
+    toggleshowRuleDialog () {
+      if (this.counter === 1) {
+        this.showRuleDialog = false
+        console.log('Rule dialog blocked')
+      }
+      this.showRuleDialog = !this.showRuleDialog
     }
   }
 }

@@ -25,3 +25,6 @@ export function getSecondes (state) {
 export function getIsStoped (state) {
   return state.isStoped
 }
+export function getIsRuleDialogAlreadyShown (state) {
+  return state.isRuleDialogAlreadyShown
+}

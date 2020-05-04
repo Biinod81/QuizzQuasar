@@ -7,5 +7,6 @@ export default {
   tabPays: [],
   minutes: 0,
   secondes: 0,
-  isStoped: true
+  isStoped: true,
+  isRuleDialogAlreadyShown: false
 }

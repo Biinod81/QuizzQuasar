@@ -35,3 +35,7 @@ export function RESET_TAB (state) {
   state.tabPays = []
   state.tabCapitales = []
 }
+// choisi le nombre de boutons souhaité
+export function TOGGLE_RULE_DIALOG_SHOWING (state, x) {
+  state.isRuleDialogAlreadyShown = true
+}

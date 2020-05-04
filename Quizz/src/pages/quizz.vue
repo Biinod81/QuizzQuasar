@@ -1,7 +1,7 @@
 <template>
   <div>
     <!--Sélection du nombre de questions et de boutons-->
-    <rules ref="rules"></rules>
+    <rules ref="rules" @blockRuleDialog="toggleRuleDialogShowing()"></rules>
     <div class="q-gutter-md row MsSemiBold justify-center">
       <chrono ref="chrono"></chrono>
     </div>
@@ -128,23 +128,22 @@ export default {
   },
 
   mounted () {
-    console.log('mounted')
-    this.$refs.rules.toggleShowHelpDialog()
-  },
-
-  destroyed () {
-    console.log('destroyed')
-  },
-
-  beforeRouteLeave (to, from, next) {
-    const awnser = window.confirm('Êtes-vous sûr de vouloir quitter le quiz maintenant ? Votre progression sera perdue.')
-
-    if (awnser) {
-      next()
+    if (this.getIsRuleDialogAlreadyShown === false) {
+      this.$refs.rules.toggleshowRuleDialog()
     } else {
-      next(false)
+      console.log('Dialog Help already shown')
     }
   },
+
+  // beforeRouteLeave (to, from, next) {
+  //   const awnser = window.confirm('Êtes-vous sûr de vouloir quitter le quiz maintenant ? Votre progression sera perdue.')
+
+  //   if (awnser) {
+  //     next()
+  //   } else {
+  //     next(false)
+  //   }
+  // },
 
   methods: {
     // Permet d'afficher les boutons pour que le joueur puissent choisir une réponse
@@ -260,11 +259,11 @@ export default {
       this.$refs.chrono.reset()
     },
 
-    ...mapActions('quizzStore', ['addPts', 'resetPts', 'nextQuestion', 'resetNumQuestion', 'setNbQuestion', 'setNbBouton', 'loadData', 'resetTab'])
+    ...mapActions('quizzStore', ['addPts', 'resetPts', 'nextQuestion', 'resetNumQuestion', 'setNbQuestion', 'setNbBouton', 'loadData', 'resetTab', 'toggleRuleDialogShowing'])
   },
 
   computed: {
-    ...mapGetters('quizzStore', ['getScoreJoueur', 'getNumQuestion', 'getNBQuestion', 'getNbBTN', 'getTabCapitales', 'getTabPays']),
+    ...mapGetters('quizzStore', ['getScoreJoueur', 'getNumQuestion', 'getNBQuestion', 'getNbBTN', 'getTabCapitales', 'getTabPays', 'getIsRuleDialogAlreadyShown']),
     ...mapState('quizzStore', ['tabCapitales', 'tabPays'])
   },
 
@@ -275,15 +274,15 @@ export default {
 }
 </script>
 
-<style lang="stylus">
-rouge = #CB4335
-vert = #28B463
+<style lang="stylus" scoped>
+$rouge = #CB4335
+$vert = #28B463
 .red
-  color rouge
+  color $rouge
   background rgba(@color,0.85)
 
 .green
-  background rgba(vert,0.9)
+  background rgba($vert,0.9)
 
 MsSemiBold
   font-family 'Montserrat'

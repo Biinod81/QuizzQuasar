@@ -37,3 +37,6 @@ export function loadData (context) {
 export function resetTab (context) {
   context.commit('RESET_TAB')
 }
+export function toggleRuleDialogShowing (context) {
+  context.commit('TOGGLE_RULE_DIALOG_SHOWING')
+}
