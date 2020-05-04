@@ -48,10 +48,13 @@ module.exports = function (ctx) {
       "QBtn",
       'QItemLabel',
       'QTab',
+      'QTabs',
       'QRouteTab',
       'QSelect',
+      'QDialog',
+      'QImg',
       'QField'],
-      directives: [],
+      directives: ['ClosePopup'],
 
       // Quasar plugins
       plugins: []

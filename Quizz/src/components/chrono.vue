@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-field outlined :dense="dense">
+    <q-field outlined>
       <template v-slot:prepend>
         <q-icon name="timer" />
       </template>
