@@ -41,10 +41,6 @@ export default {
 
   methods: {
     toggleshowRuleDialog () {
-      if (this.counter === 1) {
-        this.showRuleDialog = false
-        console.log('Rule dialog blocked')
-      }
       this.showRuleDialog = !this.showRuleDialog
     }
   }
