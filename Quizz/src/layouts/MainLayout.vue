@@ -9,7 +9,7 @@
         Jeu des capitales
         <q-btn flat round icon='help' @click="showHelpDialog()"></q-btn>
         <q-tabs class="text-secondary">
-          <q-route-tab v-for="nav in navs" :key="nav.label" :to="nav.to" :icon="nav.icon" :label="nav.label"/>
+          <q-route-tab exact v-for="lien in liens" :key="lien.label" :to="lien.to" :icon="lien.icon" :label="lien.label"/>
         </q-tabs>
       </q-toolbar-title>
     </q-toolbar>
@@ -26,7 +26,8 @@ export default {
   name: 'MainLayout',
   data () {
     return {
-      navs: [
+      // permet d'ajouter autant de lien que l'on veut sans avoir à les rajouter un par un dans le q-route-tab
+      liens: [
         {
           label: 'index',
           icon: 'home',

@@ -136,15 +136,15 @@ export default {
     console.log('destroyed')
   },
 
-  // beforeRouteLeave (to, from, next) {
-  //   const awnser = window.confirm('Êtes-vous sûr de vouloir quitter le quiz maintenant ?')
+  beforeRouteLeave (to, from, next) {
+    const awnser = window.confirm('Êtes-vous sûr de vouloir quitter le quiz maintenant ? Votre progression sera perdue.')
 
-  //   if (awnser) {
-  //     next()
-  //   } else {
-  //     next(false)
-  //   }
-  // },
+    if (awnser) {
+      next()
+    } else {
+      next(false)
+    }
+  },
 
   methods: {
     // Permet d'afficher les boutons pour que le joueur puissent choisir une réponse
