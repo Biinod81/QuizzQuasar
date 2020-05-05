@@ -30,12 +30,7 @@ export default {
     }
   },
 
-  created () {
-    console.log('created from Rules')
-  },
-
   destroyed () {
-    console.log('destroyed from Rules')
     this.$emit('blockRuleDialog')
   },
 
