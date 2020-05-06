@@ -17,11 +17,10 @@
       <br>
       <!--Désactive le bouton START tant que le nombre de boutons et de questions n'a pas été sélectionné-->
       <div class="q-gutter-lg MsSemiBold row justify-center" v-if="this.modelNbBouton === null || this.modelNbQuestion === null">
-          <q-btn color="secondary" disabled label="VALIDER"/>
+          <q-btn color="secondary" disabled label="JOUER"/>
       </div>
       <div class="q-gutter-lg MsSemiBold row justify-center" v-else>
-          <q-btn color="secondary" label="VALIDER" @click="actif = true; loadData()" v-if="!actif"/>
-          <q-btn color="secondary" label="START" @click="choixPaysAleatoire(); afficherBtn(); startChrono()" v-if="actif"/>
+          <q-btn color="secondary" label="JOUER" @click="choixPaysAleatoire(); afficherBtn(); startChrono()"/>
       </div>
     </div>
 
@@ -76,7 +75,7 @@
       <!-- fin de partie -->
       <div class="MsBlack q-pa-xl" v-else>
         <div class="row justify-center">
-          <q-btn color="accent" label="RESTART" @click="reset(); resetChrono()" v-if="isStart"/>
+          <q-btn color="accent" label="RESTART" @click="reset(); resetChrono(); loadData()" v-if="isStart"/>
         </div>
         <div class="column items-center" style="height: 100px">
           <h4 class="col">Score final : {{ this.getScoreJoueur }} / {{ this.getNBQuestion }}</h4>
@@ -118,7 +117,6 @@ export default {
       index: 0, // index permettant de choisir les capitales / pays
       pays: '', // string contenant le pays choisis aléatoirement
       capitale: '', // string contenant la capitale choisis aléatoirement
-      actif: false, // VRAI si le bouton start est actif, FAUX sinon
       isStart: false, // VRAI si la partie a commencé, FAUX sinon
       isSelect: true, // VRAI si le joueur est en train de sélectionner le nb de bouton / question, FAUX si il est en train de jouer
       questionEnCours: true, // VRAI si il y a une question en cours, FAUX sinon
@@ -128,6 +126,7 @@ export default {
   },
 
   mounted () {
+    this.loadData()
     if (this.getIsRuleDialogAlreadyShown === false) {
       this.$refs.rules.toggleshowRuleDialog()
     } else {
@@ -227,8 +226,6 @@ export default {
       this.reponseQuestion = ''
       this.nextQuestion()
       this.hide = true
-      console.log('num question ' + this.getNumQuestion)
-      console.log('nbQuestion ' + this.getNBQuestion)
     },
 
     // Reset toutes les valeurs pour pouvoir redémarrer une partie correctement
